@@ -1,0 +1,44 @@
+DOCUMENTACIÓN PARA DESARROLLADORES DEL FRONTEND (Kivy)
+========================================================
+
+Estructura general del proyecto:
+-------------------------------
+- El frontend se encuentra en la carpeta `frontend/`.
+- Las pantallas específicas de cada práctica están en `frontend/screens/`.
+- Los layouts visuales están en la carpeta `kv/`.
+- El backend de cada práctica está en `backend/` y se invoca desde el frontend.
+
+Cómo interactuar con el backend:
+--------------------------------
+Cada práctica tiene un archivo backend con funciones modulares:
+- práctica 1: `backend/practica1_balance_energetico.py`
+- práctica 2: `backend/practica2_filtrado_multicapa.py`
+- práctica 3: `backend/practica3_intercambiador_calor.py`
+
+Ejemplo de uso desde una pantalla (Python):
+-------------------------------------------
+```python
+from backend import practica1_balance_energetico as be
+
+be.iniciar_medicion()
+datos = be.obtener_datos()
+# datos es un diccionario con los indicadores principales
+```
+
+Funciones típicas disponibles en cada backend:
+- iniciar_medicion() / iniciar_filtrado() / iniciar_calentamiento()
+- obtener_datos()
+- calcular_resultados() / calcular_eficiencia() / calcular_eficiencia_termica()
+- generar_datos_grafico()
+
+Notas importantes:
+------------------
+- No modificar la lógica de backend desde el frontend.
+- Si necesitas datos para gráficos, usa la función `generar_datos_grafico()` del backend correspondiente.
+- Si necesitas adaptar la interfaz a nuevos indicadores, consulta primero la documentación de cada backend.
+
+Actualizaciones:
+----------------
+23/05/2025: Estructura inicial y ejemplos de integración para prácticas 1, 2 y 3.
+
+(Actualiza este archivo a medida que se agreguen nuevas prácticas o cambios relevantes.)
