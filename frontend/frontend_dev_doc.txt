@@ -42,3 +42,189 @@ Actualizaciones:
 23/05/2025: Estructura inicial y ejemplos de integración para prácticas 1, 2 y 3.
 
 (Actualiza este archivo a medida que se agreguen nuevas prácticas o cambios relevantes.)
+
+from kivy.uix.screenmanager import Screen
+from kivy.properties import StringProperty, NumericProperty
+from kivy.lang import Builder
+
+from backend import practica1_balance_energetico as be
+
+class Practica1Screen(Screen):
+    # Propiedades para mostrar resultados
+    energia_generada = StringProperty("")
+    energia_util = StringProperty("")
+    diferencia = StringProperty("")
+
+    def simular_balance(self):
+        try:
+            # Obtener valores de los inputs
+            radiacion = float(self.ids.input_radiacion.text)
+            area = float(self.ids.input_area.text)
+            eficiencia = float(self.ids.input_eficiencia.text) / 100
+            consumo = float(self.ids.input_consumo.text)
+            perdidas = float(self.ids.input_perdidas.text) / 100
+
+            # Lógica de simulación usando el backend
+            be.iniciar_medicion(radiacion, area, eficiencia, perdidas)
+            datos = be.obtener_datos()
+            # datos esperado: {'energia_generada': ..., 'energia_util': ..., 'diferencia': ...}
+
+            self.energia_generada = f"{datos.get('energia_generada', 0):.2f} Wh"
+            self.energia_util = f"{datos.get('energia_util', 0):.2f} Wh"
+            self.diferencia = f"{datos.get('diferencia', 0):.2f} Wh"
+        except Exception as e:
+            self.energia_generada = "Error en los datos"
+            self.energia_util = ""
+            self.diferencia = ""
+
+<Practica1Screen>:
+    name: "practica1"
+    canvas.before:
+        Color:
+            rgba: (240/255, 240/255, 240/255, 1)  # Fondo #f0f0f0
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: [40, 30, 40, 30]
+        spacing: 20
+
+        Label:
+            text: "Práctica 1 – Balance energético del sistema fotovoltaico"
+            font_size: '22sp'
+            color: (34/255, 34/255, 34/255, 1)
+            bold: True
+            size_hint_y: None
+            height: self.texture_size[1] + 20
+
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 40
+
+            # Inputs a la izquierda
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: 14
+                size_hint_x: 0.5
+
+                Label:
+                    text: "Radiación solar (W/m²)"
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+                TextInput:
+                    id: input_radiacion
+                    hint_text: "Ej: 800"
+                    input_filter: 'float'
+                    background_color: (1,1,1,1)
+                    foreground_color: (34/255, 34/255, 34/255, 1)
+                    multiline: False
+
+                Label:
+                    text: "Área del panel (m²)"
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+                TextInput:
+                    id: input_area
+                    hint_text: "Ej: 1.5"
+                    input_filter: 'float'
+                    background_color: (1,1,1,1)
+                    foreground_color: (34/255, 34/255, 34/255, 1)
+                    multiline: False
+
+                Label:
+                    text: "Eficiencia del panel (%)"
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+                TextInput:
+                    id: input_eficiencia
+                    hint_text: "Ej: 18"
+                    input_filter: 'float'
+                    background_color: (1,1,1,1)
+                    foreground_color: (34/255, 34/255, 34/255, 1)
+                    multiline: False
+
+                Label:
+                    text: "Consumo de carga (Wh/día)"
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+                TextInput:
+                    id: input_consumo
+                    hint_text: "Ej: 1200"
+                    input_filter: 'float'
+                    background_color: (1,1,1,1)
+                    foreground_color: (34/255, 34/255, 34/255, 1)
+                    multiline: False
+
+                Label:
+                    text: "Pérdidas estimadas (%)"
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+                TextInput:
+                    id: input_perdidas
+                    hint_text: "Ej: 15"
+                    input_filter: 'float'
+                    background_color: (1,1,1,1)
+                    foreground_color: (34/255, 34/255, 34/255, 1)
+                    multiline: False
+
+            # Resultados a la derecha
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: 18
+                size_hint_x: 0.5
+                padding: [20, 10, 20, 10]
+                canvas.before:
+                    Color:
+                        rgba: (72/255, 219/255, 251/255, 0.12)  # #48dbfb suave
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [12]
+
+                Label:
+                    text: "Resultados"
+                    font_size: '18sp'
+                    color: (46/255, 134/255, 222/255, 1)
+                    bold: True
+
+                Label:
+                    text: "Energía generada: [b]{}[/b]".format(root.energia_generada)
+                    markup: True
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+
+                Label:
+                    text: "Energía útil después de pérdidas: [b]{}[/b]".format(root.energia_util)
+                    markup: True
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+
+                Label:
+                    text: "Diferencia generación-consumo: [b]{}[/b]".format(root.diferencia)
+                    markup: True
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+
+        # Botón de simulación
+        Button:
+            text: "Simular"
+            size_hint: (0.3, None)
+            height: 48
+            pos_hint: {'center_x': 0.5}
+            background_color: (16/255, 172/255, 132/255, 1)  # #10ac84
+            color: (1,1,1,1)
+            font_size: '18sp'
+            on_release: root.simular_balance()
+
+        # Botón volver
+        Button:
+            text: "Volver"
+            size_hint: (0.2, None)
+            height: 42
+            pos_hint: {'center_x': 0.5}
+            background_color: (46/255, 134/255, 222/255, 1)  # #2e86de
+            color: (1,1,1,1)
+            font_size: '16sp'
+            on_release: app.root.current = "main"
