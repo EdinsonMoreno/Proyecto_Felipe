@@ -285,7 +285,7 @@ class Practica2Screen(Screen):
     name: "practica2"
     canvas.before:
         Color:
-            rgba: (240/255, 240/255, 240/255, 1)  # Fondo #f0f0f0
+            rgba: (240/255, 240/255, 240/255, 1)
         Rectangle:
             pos: self.pos
             size: self.size
@@ -296,7 +296,7 @@ class Practica2Screen(Screen):
         spacing: 20
 
         Label:
-            text: "Práctica 2 – Filtrado multicapa de agua"
+            text: "Práctica 2 – Simulación del sistema de filtrado multicapa"
             font_size: '22sp'
             color: (34/255, 34/255, 34/255, 1)
             bold: True
@@ -319,23 +319,69 @@ class Practica2Screen(Screen):
                     font_size: '16sp'
                 TextInput:
                     id: input_turbidez
-                    hint_text: "Ej: 150"
+                    hint_text: "Ej: 50"
                     input_filter: 'float'
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
 
                 Label:
-                    text: "Volumen de agua (litros)"
+                    text: "Volumen de agua (L)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
                 TextInput:
                     id: input_volumen
-                    hint_text: "Ej: 10"
+                    hint_text: "Ej: 20"
                     input_filter: 'float'
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
+
+                Label:
+                    text: "Capas activas"
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+                    size_hint_y: None
+                    height: 24
+
+                BoxLayout:
+                    orientation: 'horizontal'
+                    spacing: 10
+                    size_hint_y: None
+                    height: 32
+
+                    CheckBox:
+                        id: check_grava
+                        active: root.grava_activa
+                        on_active: root.grava_activa = self.active
+                    Label:
+                        text: "Grava"
+                        color: (34/255, 34/255, 34/255, 1)
+                        font_size: '15sp'
+                        size_hint_x: None
+                        width: 60
+
+                    CheckBox:
+                        id: check_arena
+                        active: root.arena_activa
+                        on_active: root.arena_activa = self.active
+                    Label:
+                        text: "Arena"
+                        color: (34/255, 34/255, 34/255, 1)
+                        font_size: '15sp'
+                        size_hint_x: None
+                        width: 60
+
+                    CheckBox:
+                        id: check_carbon
+                        active: root.carbon_activo
+                        on_active: root.carbon_activo = self.active
+                    Label:
+                        text: "Carbón activado"
+                        color: (34/255, 34/255, 34/255, 1)
+                        font_size: '15sp'
+                        size_hint_x: None
+                        width: 120
 
             # Resultados a la derecha
             BoxLayout:
@@ -345,7 +391,7 @@ class Practica2Screen(Screen):
                 padding: [20, 10, 20, 10]
                 canvas.before:
                     Color:
-                        rgba: (72/255, 219/255, 251/255, 0.12)  # #48dbfb suave
+                        rgba: (72/255, 219/255, 251/255, 0.12)
                     RoundedRectangle:
                         pos: self.pos
                         size: self.size
@@ -370,104 +416,31 @@ class Practica2Screen(Screen):
                     font_size: '16sp'
 
                 Label:
-                    text: "Eficiencia del filtrado: [b]{}[/b]".format(root.eficiencia)
+                    text: "Eficiencia del sistema: [b]{}[/b]".format(root.eficiencia)
                     markup: True
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
 
                 Label:
-                    text: "[b]{}[/b]".format(root.mensaje_error)
-                    markup: True
-                    color: (231/255, 76/255, 60/255, 1)  # Rojo para mensajes de error
-                    font_size: '16sp'
+                    text: root.mensaje_error
+                    color: (1, 0, 0, 1)
+                    font_size: '15sp'
+
+                # Imagen opcional del sistema de filtrado
+                Image:
+                    source: "assets/images/filtrado_esquema.png"
+                    allow_stretch: True
+                    keep_ratio: True
                     size_hint_y: None
-                    height: self.texture_size[1 + 10]
-
-        # Controles de selección de capas
-        BoxLayout:
-            orientation: 'vertical'
-            spacing: 10
-            size_hint_y: None
-            height: dp(120)
-
-            Label:
-                text: "Seleccionar capas del filtro"
-                font_size: '18sp'
-                color: (34/255, 34/255, 34/255, 1)
-                bold: True
-                size_hint_y: None
-                height: self.texture_size[1] + 10
-
-            # Grava
-            BoxLayout:
-                orientation: 'horizontal'
-                spacing: 10
-                size_hint_y: None
-                height: dp(40)
-
-                CheckBox:
-                    id: checkbox_grava
-                    active: root.grava_activa
-                    on_active: root.grava_activa = self.active
-
-                Label:
-                    text: "Grava"
-                    color: (34/255, 34/255, 34/255, 1)
-                    font_size: '16sp'
-                    valign: 'middle'
-                    halign: 'left'
-                    size_hint_y: None
-                    height: self.texture_size[1] + 10
-
-            # Arena
-            BoxLayout:
-                orientation: 'horizontal'
-                spacing: 10
-                size_hint_y: None
-                height: dp(40)
-
-                CheckBox:
-                    id: checkbox_arena
-                    active: root.arena_activa
-                    on_active: root.arena_activa = self.active
-
-                Label:
-                    text: "Arena"
-                    color: (34/255, 34/255, 34/255, 1)
-                    font_size: '16sp'
-                    valign: 'middle'
-                    halign: 'left'
-                    size_hint_y: None
-                    height: self.texture_size[1] + 10
-
-            # Carbón activado
-            BoxLayout:
-                orientation: 'horizontal'
-                spacing: 10
-                size_hint_y: None
-                height: dp(40)
-
-                CheckBox:
-                    id: checkbox_carbon
-                    active: root.carbon_activo
-                    on_active: root.carbon_activo = self.active
-
-                Label:
-                    text: "Carbón activado"
-                    color: (34/255, 34/255, 34/255, 1)
-                    font_size: '16sp'
-                    valign: 'middle'
-                    halign: 'left'
-                    size_hint_y: None
-                    height: self.texture_size[1] + 10
+                    height: 120
 
         # Botón de simulación
         Button:
-            text: "Filtrar"
+            text: "Simular"
             size_hint: (0.3, None)
             height: 48
             pos_hint: {'center_x': 0.5}
-            background_color: (16/255, 172/255, 132/255, 1)  # #10ac84
+            background_color: (16/255, 172/255, 132/255, 1)
             color: (1,1,1,1)
             font_size: '18sp'
             on_release: root.simular_filtrado()
@@ -478,7 +451,7 @@ class Practica2Screen(Screen):
             size_hint: (0.2, None)
             height: 42
             pos_hint: {'center_x': 0.5}
-            background_color: (46/255, 134/255, 222/255, 1)  # #2e86de
+            background_color: (46/255, 134/255, 222/255, 1)
             color: (1,1,1,1)
             font_size: '16sp'
             on_release: app.root.current = "main"
