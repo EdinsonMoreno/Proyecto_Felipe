@@ -14,6 +14,8 @@ Cada práctica tiene un archivo backend con funciones modulares:
 - práctica 1: `backend/practica1_balance_energetico.py`
 - práctica 2: `backend/practica2_filtrado_multicapa.py`
 - práctica 3: `backend/practica3_intercambiador_calor.py`
+- práctica 4: `backend/practica4_caldera.py`
+- práctica 5: `backend/practica5_captacion_lluvia.py`
 
 Ejemplo de uso desde una pantalla (Python):
 -------------------------------------------
@@ -26,7 +28,7 @@ datos = be.obtener_datos()
 ```
 
 Funciones típicas disponibles en cada backend:
-- iniciar_medicion() / iniciar_filtrado() / iniciar_calentamiento()
+- iniciar_medicion() / iniciar_filtrado() / iniciar_calentamiento() / iniciar_caldera()
 - obtener_datos()
 - calcular_resultados() / calcular_eficiencia() / calcular_eficiencia_termica()
 - generar_datos_grafico()
@@ -36,10 +38,15 @@ Notas importantes:
 - No modificar la lógica de backend desde el frontend.
 - Si necesitas datos para gráficos, usa la función `generar_datos_grafico()` del backend correspondiente.
 - Si necesitas adaptar la interfaz a nuevos indicadores, consulta primero la documentación de cada backend.
+- Todas las funciones principales de backend ahora retornan un dict estructurado con status, data y message para manejo seguro de errores.
+- Se recomienda que el frontend valide el campo 'status' antes de procesar los datos recibidos y muestre el mensaje correspondiente al usuario si ocurre un error.
 
 Actualizaciones:
 ----------------
 23/05/2025: Estructura inicial y ejemplos de integración para prácticas 1, 2 y 3.
+23/05/2025: Se agrega integración y ejemplo para práctica 4 (caldera solar/eléctrica).
+23/05/2025: Se agrega integración y ejemplo para práctica 5 (captación de agua lluvia y sensor ultrasónico).
+23/05/2025: Se documenta la auditoría y refactorización de seguridad y robustez en todos los backends. El frontend debe manejar los nuevos formatos de retorno de error.
 
 (Actualiza este archivo a medida que se agreguen nuevas prácticas o cambios relevantes.)
 

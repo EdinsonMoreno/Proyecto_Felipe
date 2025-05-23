@@ -1,0 +1,59 @@
+AUDITORÍA Y REFACORIZACIÓN BACKEND - python-kivy-prototipo
+=========================================================
+
+Fecha: 23/05/2025
+Responsable: GitHub Copilot
+
+Resumen de cambios:
+-------------------
+Se realizó una auditoría y refactorización de los archivos backend de las prácticas 1 a 5 para mejorar la robustez, seguridad y mantenibilidad del código. Los principales cambios fueron:
+
+1. Manejo de errores:
+   - Se agregaron bloques try-except en todas las funciones críticas (simulación, cálculos físicos, generación de datos).
+   - Se capturan excepciones específicas (ZeroDivisionError, Exception general) y se retorna un diccionario estructurado con status, data y message.
+   - Se evita el lanzamiento de errores no controlados hacia la interfaz.
+
+2. Validación de datos:
+   - Se validan rangos físicos de los parámetros simulados antes de realizar cálculos.
+   - Si se detectan valores fuera de rango o negativos, se retorna un mensaje de error estructurado.
+
+3. Seguridad:
+   - Se garantiza que no hay uso de eval(), exec() ni acceso a rutas del sistema fuera del contexto permitido.
+   - No se permite la ejecución arbitraria ni la manipulación de archivos externos.
+   - Todas las entradas simuladas están acotadas a rangos razonables.
+
+4. Estructura de retorno:
+   - Todas las funciones principales retornan un dict con las claves:
+     {
+         "status": "ok" / "error",
+         "data": {...},
+         "message": "..."
+     }
+   - Esto permite a la interfaz frontend manejar errores y mensajes de forma controlada.
+
+5. Optimización:
+   - Se eliminaron variables innecesarias y se consolidaron cálculos.
+   - Se mantiene la compatibilidad con la interfaz frontend existente.
+
+Archivos afectados:
+-------------------
+- backend/practica1_balance_energetico.py
+- backend/practica2_filtrado_multicapa.py
+- backend/practica3_intercambiador_calor.py
+- backend/practica4_caldera.py
+- backend/practica5_captacion_lluvia.py
+
+Notas para futuras mejoras:
+--------------------------
+- Se recomienda documentar exhaustivamente cualquier función nueva o cambio en la estructura de retorno.
+- Si se agregan nuevas fuentes de datos o sensores, validar siempre los rangos y el tipo de datos recibidos.
+- Considerar la integración de logs internos para auditoría avanzada (sin exponer información sensible).
+- Revisar periódicamente la seguridad ante nuevas vulnerabilidades de Python estándar.
+
+Posibles vulnerabilidades a monitorear:
+--------------------------------------
+- Cambios en la lógica de simulación que permitan valores fuera de rango físico.
+- Modificaciones que permitan acceso a rutas o archivos fuera de assets/data/.
+- Inclusión accidental de dependencias externas no auditadas.
+
+Fin del reporte.
