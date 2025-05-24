@@ -25,18 +25,21 @@ class Practica2Screen(Screen):
 
     def simular_filtrado(self):
         try:
-            # Validar inputs (ejemplo: turbidez inicial y volumen)
             try:
                 turbidez = float(self.ids.input_turbidez.text)
                 volumen = float(self.ids.input_volumen.text)
+                tiempo = float(self.ids.input_tiempo.text) if 'input_tiempo' in self.ids else 95
             except ValueError:
                 self.mostrar_error("Todos los valores deben ser numéricos y válidos.")
                 return
-            if turbidez < 0 or volumen <= 0:
-                self.mostrar_error("La turbidez debe ser >= 0 y el volumen > 0.")
+            if turbidez < 0 or volumen <= 0 or tiempo <= 0:
+                self.mostrar_error("La turbidez debe ser >= 0 y el volumen y tiempo > 0.")
                 return
-            filtrado.iniciar_filtrado()
-            resultado = filtrado.obtener_datos()
+            resultado = filtrado.calcular_resultados(
+                turbidez_inicial=turbidez,
+                volumen=volumen,
+                tiempo=tiempo
+            )
             if resultado.get("status") == "ok":
                 datos = resultado.get("data", {})
                 self.turbidez_final = f"{datos.get('turbidez_final', 0):.2f} NTU"

@@ -22,21 +22,23 @@ class Practica3Screen(Screen):
 
     def simular_intercambio(self):
         try:
-            # Validar inputs (ejemplo: temperaturas, caudales, tiempo)
             try:
-                tcaliente = float(self.ids.input_tcaliente.text)
-                caudal_caliente = float(self.ids.input_caudal_caliente.text)
-                tfrio = float(self.ids.input_tfrio.text)
-                caudal_frio = float(self.ids.input_caudal_frio.text)
-                tiempo = float(self.ids.input_tiempo.text)
+                temperatura_inicial = float(self.ids.input_tcaliente.text)
+                masa_agua = float(self.ids.input_caudal_caliente.text)
+                potencia_solar = float(self.ids.input_tfrio.text)
+                tiempo_exposicion = float(self.ids.input_tiempo.text)
             except ValueError:
                 self.mostrar_error("Todos los valores deben ser numéricos y válidos.")
                 return
-            if tcaliente < 0 or caudal_caliente <= 0 or tfrio < 0 or caudal_frio <= 0 or tiempo <= 0:
+            if temperatura_inicial < 0 or masa_agua <= 0 or potencia_solar < 0 or tiempo_exposicion <= 0:
                 self.mostrar_error("Todos los valores deben ser mayores a cero (excepto temperaturas, que pueden ser >= 0).")
                 return
-            intercambiador.iniciar_calentamiento()
-            resultado = intercambiador.obtener_datos()
+            resultado = intercambiador.calcular_resultados(
+                temperatura_inicial=temperatura_inicial,
+                masa_agua=masa_agua,
+                potencia_solar=potencia_solar,
+                tiempo_exposicion=tiempo_exposicion
+            )
             if resultado.get("status") == "ok":
                 datos = resultado.get("data", {})
                 self.temperatura_inicial = f"{datos.get('temperatura_inicial', 0):.1f} °C"
