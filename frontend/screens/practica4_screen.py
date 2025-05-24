@@ -154,18 +154,24 @@ class Practica4Screen(Screen):
                 # Elementos
                 with self.canvas:
                     # Tanque
-                    Color(0.2, 0.6, 0.8, 1)
+                    self.tanque_color = Color(0.2, 0.6, 0.8, 1)
                     self.tanque = Rectangle(pos=(320, 140), size=(160, 120))
                     # Agua (nivel sube y color cambia)
-                    Color(0.1, 0.5, 1, 0.7)
+                    self.agua_color = Color(0.1, 0.5, 1, 0.7)
                     self.agua = Rectangle(pos=(320, 140), size=(160, 80))
                     # Vapor (líneas curvas)
+                    self.vapor_colors = []
+                    self.vapor = []
                     for i in range(3):
-                        Color(0.8, 0.8, 0.8, 0.7)
+                        v_color = Color(0.8, 0.8, 0.8, 0.7)
+                        self.vapor_colors.append(v_color)
                         self.vapor.append(Line(points=[360+60*i, 260, 360+60*i, 380], width=2))
                     # Burbujas
+                    self.burbujas_colors = []
+                    self.burbujas = []
                     for i in range(self.n_burbujas):
-                        Color(1,1,1,0.7)
+                        b_color = Color(1,1,1,0.7)
+                        self.burbujas_colors.append(b_color)
                         self.burbujas.append(Ellipse(pos=(340+18*i, 150), size=(16,16)))
                 self._event = Clock.schedule_interval(self.animar, 1/60)
             def animar(self, dt):

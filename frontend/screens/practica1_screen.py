@@ -149,38 +149,42 @@ class Practica1Screen(Screen):
                 self.t = 0
                 with self.canvas:
                     # Panel solar con textura de celdas
-                    Color(0.12, 0.36, 0.7, 1)
+                    self.panel_color = Color(0.12, 0.36, 0.7, 1)
                     self.panel = Rectangle(pos=self.panel_pos, size=(120, 60))
                     # Celdas
                     self.celdas = []
+                    self.celdas_colors = []
                     for i in range(4):
                         for j in range(2):
-                            Color(0.18, 0.52, 0.87, 1)
+                            c_color = Color(0.18, 0.52, 0.87, 1)
+                            self.celdas_colors.append(c_color)
                             self.celdas.append(Rectangle(pos=(self.panel_pos[0]+10+25*i, self.panel_pos[1]+10+20*j), size=(20, 16)))
                     # Borde panel
                     Color(0.1, 0.1, 0.1, 1)
                     Line(rectangle=(self.panel_pos[0], self.panel_pos[1], 120, 60), width=2)
                     # Batería cilíndrica (inicialmente vacía)
-                    Color(0.3, 0.3, 0.3, 1)
+                    self.bateria_color = Color(0.3, 0.3, 0.3, 1)
                     self.bateria = RoundedRectangle(pos=self.bateria_pos, size=(40, 100), radius=[20])
                     # Tapa batería
-                    Color(0.5, 0.5, 0.5, 1)
+                    self.tapa_color = Color(0.5, 0.5, 0.5, 1)
                     self.tapa = Ellipse(pos=(self.bateria_pos[0], self.bateria_pos[1]+90), size=(40, 20))
                     # Nivel de carga (verde, animado)
-                    Color(0.2, 0.8, 0.2, 0.85)
+                    self.nivel_color = Color(0.2, 0.8, 0.2, 0.85)
                     self.nivel = Rectangle(pos=(self.bateria_pos[0]+5, self.bateria_pos[1]+10), size=(30, 0))
                 # Sol y halo
                 with self.canvas.after:
                     # Halo
-                    Color(1, 1, 0.5, 0.18)
+                    self.halo_color = Color(1, 1, 0.5, 0.18)
                     self.halo = Ellipse(pos=(self.sol_pos[0]-40, self.sol_pos[1]-40), size=(170, 170))
                     # Sol
-                    Color(1, 0.95, 0.3, 1)
+                    self.sol_color = Color(1, 0.95, 0.3, 1)
                     self.sol = Ellipse(pos=self.sol_pos, size=(90, 90))
                     # Rayos
                     self.rayos = []
+                    self.rayos_colors = []
                     for ang, long in zip(self.rayos_ang, self.rayos_long):
-                        Color(1, 0.95, 0.3, 0.7)
+                        r_color = Color(1, 0.95, 0.3, 0.7)
+                        self.rayos_colors.append(r_color)
                         x0 = self.sol_pos[0]+45
                         y0 = self.sol_pos[1]+45
                         x1 = x0 + long*math.cos(ang)

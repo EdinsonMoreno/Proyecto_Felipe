@@ -37,9 +37,6 @@ class Practica3Screen(Screen):
             if tcaliente < 0 or caudal_caliente <= 0 or tfrio < 0 or caudal_frio <= 0 or tiempo <= 0:
                 self.mostrar_error("Todos los valores deben ser mayores a cero (excepto temperaturas, que pueden ser >= 0).")
                 return
-            if tfrio >= tcaliente:
-                self.mostrar_error("La temperatura de entrada fría debe ser menor que la caliente.")
-                return
             # Calcular masa de agua calentada (kg)
             masa_agua = caudal_frio * tiempo  # L/min * min = L ≈ kg (fluido frío)
             # Potencia solar estimada: Q = m*c*ΔT/t, c=4186 J/kgK, ΔT = tcaliente-tfrio, t=tiempo*60s
@@ -58,10 +55,6 @@ class Practica3Screen(Screen):
             )
             if resultado.get("status") == "ok":
                 datos = resultado.get("data", {})
-                # Validación: la temperatura final no puede ser mayor que la caliente
-                if datos.get('temperatura_final', 0) > tcaliente:
-                    self.mostrar_error("La temperatura de salida final no puede ser mayor que la de entrada caliente.")
-                    return
                 self.temperatura_inicial = f"{datos.get('temperatura_inicial', 0):.1f} °C"
                 self.temperatura_final = f"{datos.get('temperatura_final', 0):.1f} °C"
                 self.tiempo_exposicion = f"{datos.get('tiempo_exposicion', 0):.1f} min"
@@ -136,58 +129,73 @@ class Practica3Screen(Screen):
         from kivy.uix.widget import Widget
         from kivy.uix.popup import Popup
         from kivy.uix.button import Button
-        from kivy.graphics import Line, Color, Rectangle
+        from kivy.graphics import Line, Color, Rectangle, Ellipse
         from kivy.clock import Clock
-        class IntercambiadorAnimado(Widget):
+        import math
+        class IntercambiadorRealista(Widget):
             def __init__(self, **kwargs):
                 super().__init__(**kwargs)
                 self.size = (800, 500)
                 with self.canvas.before:
                     Color(1, 1, 1, 1)
                     Rectangle(pos=self.pos, size=self.size)
-                # Tubos
-                self.x_roja = 120
-                self.x_azul = 680
-                self.flujo_rojo = []
-                self.flujo_azul = []
-                with self.canvas:
-                    # Tubo rojo (arriba)
-                    Color(0.9, 0.2, 0.2, 1)
-                    self.tubo_rojo = Line(points=[100, 350, 700, 350], width=24, cap='round')
-                    # Tubo azul (abajo)
-                    Color(0.2, 0.4, 0.9, 1)
-                    self.tubo_azul = Line(points=[700, 150, 100, 150], width=24, cap='round')
-                    # Flujos animados (líneas)
-                    for i in range(8):
-                        Color(1, 0.5, 0.5, 1)
-                        self.flujo_rojo.append(Line(points=[self.x_roja+60*i, 350, self.x_roja+60*i+30, 300], width=4))
-                        Color(0.5, 0.7, 1, 1)
-                        self.flujo_azul.append(Line(points=[self.x_azul-60*i, 150, self.x_azul-60*i-30, 200], width=4))
-                    # Zona de mezcla (rectángulo degradado)
-                    Color(0.7, 0.4, 0.7, 0.5)
-                    self.mezcla = Rectangle(pos=(370, 200), size=(60, 120))
+                # Tubos y válvulas
                 self.t = 0
+                with self.canvas:
+                    # Tubo caliente (rojo, arriba, curvo)
+                    self.tubo_rojo_color = Color(0.9, 0.2, 0.2, 1)
+                    self.tubo_rojo = Line(bezier=[120, 370, 300, 400, 500, 320, 680, 370], width=28, cap='round')
+                    # Válvula roja
+                    self.valv_roja_color = Color(0.7, 0.1, 0.1, 1)
+                    self.valv_roja = Ellipse(pos=(110, 355), size=(30, 30))
+                    # Tubo frío (azul, abajo, curvo)
+                    self.tubo_azul_color = Color(0.2, 0.4, 0.9, 1)
+                    self.tubo_azul = Line(bezier=[680, 130, 500, 180, 300, 100, 120, 130], width=28, cap='round')
+                    # Válvula azul
+                    self.valv_azul_color = Color(0.1, 0.2, 0.7, 1)
+                    self.valv_azul = Ellipse(pos=(110, 115), size=(30, 30))
+                    # Zona de contacto (mezcla)
+                    self.mezcla_color = Color(1, 0.7, 0.2, 0.5)
+                    self.mezcla = Ellipse(pos=(370, 220), size=(60, 60))
+                    # Flujos animados (líneas con degradado)
+                    self.flujo_rojo = []
+                    self.flujo_rojo_colors = []
+                    self.flujo_azul = []
+                    self.flujo_azul_colors = []
+                    for i in range(7):
+                        fr_color = Color(1, 0.5+0.05*i, 0.5, 0.7)
+                        self.flujo_rojo_colors.append(fr_color)
+                        self.flujo_rojo.append(Line(points=[140+60*i, 370, 170+60*i, 320], width=4))
+                        fa_color = Color(0.5, 0.7+0.04*i, 1, 0.7)
+                        self.flujo_azul_colors.append(fa_color)
+                        self.flujo_azul.append(Line(points=[660-60*i, 130, 630-60*i, 180], width=4))
                 self._event = Clock.schedule_interval(self.animar, 1/60)
             def animar(self, dt):
-                # Animar flujos
+                # Flujos animados
                 for i, linea in enumerate(self.flujo_rojo):
-                    dx = (self.t*60 + i*30) % 600
-                    linea.points = [120+dx, 350, 150+dx, 300]
+                    dx = (self.t*60 + i*30) % 540
+                    linea.points = [140+dx, 370, 170+dx, 320]
                 for i, linea in enumerate(self.flujo_azul):
-                    dx = (self.t*60 + i*30) % 600
-                    linea.points = [680-dx, 150, 650-dx, 200]
-                # Degradado de mezcla (oscila)
-                self.mezcla.size = (60, 120 + 10 * abs((self.t % 2) - 1))
+                    dx = (self.t*60 + i*30) % 540
+                    linea.points = [660-dx, 130, 630-dx, 180]
+                # Mezcla oscila
+                self.mezcla.size = (60+10*math.sin(self.t*1.5), 60+10*math.cos(self.t*1.5))
+                # Animar colores (ejemplo: tubo rojo oscila entre 0.9 y 1.0 de rojo)
+                self.tubo_rojo_color.rgba = (0.9+0.1*math.sin(self.t*2), 0.2, 0.2, 1)
+                self.valv_roja_color.rgba = (0.7, 0.1+0.1*math.sin(self.t*2), 0.1, 1)
+                self.tubo_azul_color.rgba = (0.2, 0.4+0.1*math.sin(self.t*2), 0.9, 1)
+                self.valv_azul_color.rgba = (0.1, 0.2+0.1*math.sin(self.t*2), 0.7, 1)
+                self.mezcla_color.rgba = (1, 0.7+0.3*math.sin(self.t*2), 0.2, 0.5)
                 self.t += dt
-                if self.t > 8:
+                if self.t > 10:
                     if self._event:
                         self._event.cancel()
             def stop(self):
                 if hasattr(self, '_event') and self._event:
                     self._event.cancel()
-        content = IntercambiadorAnimado()
+        content = IntercambiadorRealista()
         popup = Popup(
-            title="Animación – Práctica 3",
+            title="Animación – Intercambiador de Calor (Práctica 3)",
             content=content,
             background="atlas://data/images/defaulttheme/button",
             size_hint=(None, None), size=(800, 500),

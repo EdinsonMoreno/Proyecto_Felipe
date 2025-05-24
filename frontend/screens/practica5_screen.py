@@ -139,23 +139,27 @@ class Practica5Screen(Screen):
                 self.tiempo = 0
                 with self.canvas:
                     # Nube (varias elipses)
-                    Color(0.7, 0.7, 0.75, 1)
+                    self.nube1_color = Color(0.7, 0.7, 0.75, 1)
                     self.nube1 = Ellipse(pos=(self.nube_pos[0], self.nube_pos[1]), size=(80, 40))
+                    self.nube2_color = Color(0.7, 0.7, 0.75, 1)
                     self.nube2 = Ellipse(pos=(self.nube_pos[0]+40, self.nube_pos[1]+10), size=(80, 50))
+                    self.nube3_color = Color(0.7, 0.7, 0.75, 1)
                     self.nube3 = Ellipse(pos=(self.nube_pos[0]+100, self.nube_pos[1]), size=(60, 38))
                     # Techo (línea inclinada)
-                    Color(0.7, 0.4, 0.2, 1)
+                    self.techo_color = Color(0.7, 0.4, 0.2, 1)
                     self.techo = Line(points=[self.techo_pos[0], self.techo_pos[1], self.techo_pos[0]+self.techo_size[0], self.techo_pos[1]+self.techo_size[1]], width=10, cap='round')
                     # Tanque (rectángulo)
-                    Color(0.2, 0.6, 0.8, 1)
+                    self.tanque_color = Color(0.2, 0.6, 0.8, 1)
                     self.tanque = Rectangle(pos=self.tanque_pos, size=self.tanque_size)
                     # Nivel de agua (rectángulo)
-                    Color(0.1, 0.5, 1, 0.7)
+                    self.agua_color = Color(0.1, 0.5, 1, 0.7)
                     self.agua = Rectangle(pos=(self.tanque_pos[0], self.tanque_pos[1]), size=(self.tanque_size[0], 0))
                     # Gotas (elipses)
+                    self.gota_colors = []
                     self.gota_objs = []
                     for x, y, _, _ in self.gotas:
-                        Color(0.2, 0.6, 0.9, 1)
+                        g_color = Color(0.2, 0.6, 0.9, 1)
+                        self.gota_colors.append(g_color)
                         self.gota_objs.append(Ellipse(pos=(x, y), size=(14, 26)))
                 self._event = Clock.schedule_interval(self.animar, 1/60)
             def animar(self, dt):
