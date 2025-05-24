@@ -40,3 +40,48 @@ Archivos modificados:
 Todos los cambios cumplen con las restricciones de seguridad, compatibilidad y estilo institucional.
 
 Fin del reporte.
+
+REPORTE DE REFACTORIZACIÓN BACKEND - SIMULACIÓN DETERMINISTA Y REACTIVA
+=======================================================================
+
+Fecha: 23/05/2025
+Responsable: GitHub Copilot
+
+Resumen de cambios:
+-------------------
+Se refactorizaron los módulos backend de las prácticas 1 a 5 para garantizar que:
+- Todas las funciones de cálculo reciben explícitamente los valores de entrada como parámetros.
+- No se usan variables globales, caché ni valores precargados para los cálculos principales.
+- Cada vez que el usuario presiona “Simular”, los resultados reflejan exactamente los valores actuales ingresados.
+- Se eliminó cualquier fuente de aleatoriedad o indeterminismo en los resultados.
+
+Detalles por práctica:
+----------------------
+- **Práctica 1:**
+  - La función `calcular_resultados(radiacion, tension, corriente, tiempo)` usa solo los parámetros recibidos.
+- **Práctica 2:**
+  - La función `calcular_resultados(turbidez_inicial, volumen, tiempo)` es completamente reactiva.
+- **Práctica 3:**
+  - La función `calcular_resultados(temperatura_inicial, masa_agua, potencia_solar, tiempo_exposicion)` depende solo de los argumentos.
+- **Práctica 4:**
+  - La función `calcular_resultados(temperatura_inicial, volumen_agua, energia_entrada, modo)` es determinista y no usa estado global.
+- **Práctica 5:**
+  - La función `calcular_resultados(intensidad_lluvia, area_techo, duracion)` calcula todo en tiempo real a partir de los inputs.
+
+Impacto esperado:
+-----------------
+- Los resultados de simulación serán siempre idénticos para los mismos valores de entrada.
+- El frontend debe asegurarse de pasar los valores actuales del usuario en cada llamada a la función de cálculo.
+- Se elimina la posibilidad de resultados incoherentes o inconsistentes en evaluaciones y demostraciones.
+
+Recomendaciones para el frontend:
+---------------------------------
+- Verificar que el botón “Simular” o equivalente pase siempre los valores actuales de los campos de entrada a la función de backend.
+- No depender de variables globales ni de estado previo para mostrar resultados.
+
+Notas adicionales:
+------------------
+- Si se requiere una opción de simulación con ruido o aleatoriedad, debe implementarse como parámetro explícito (por ejemplo, `modo_aleatorio=True`).
+- Toda la lógica de simulación es ahora apta para uso académico, validación y auditoría.
+
+Fin del reporte.
