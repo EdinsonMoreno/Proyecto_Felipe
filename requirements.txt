@@ -1,6 +1,17 @@
 # Requerimientos para python-kivy-prototipo
+# Framework principal
 kivy>=2.1.0
-kivy_garden.matplotlib
+
+# Gráficos y visualización
 matplotlib>=3.5.0
-# (Opcional para desarrollo y pruebas)
-# numpy>=1.18.0
+kivy_garden.matplotlib
+
+# Animaciones pygame (para archivos de animación independientes)
+pygame>=2.1.2
+
+# Utilidades matemáticas (descomentado para compatibilidad)
+# numpy>=1.21.0
+
+# Desarrollo y pruebas
+# pytest>=7.0.0 (opcional para testing)
+# flake8>=4.0.0 (opcional para linting)
