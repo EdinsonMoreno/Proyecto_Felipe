@@ -46,7 +46,9 @@ class Practica1Screen(Screen):
                 radiacion=radiacion,
                 tension=tension,
                 corriente=corriente,
-                tiempo=tiempo
+                tiempo=tiempo,
+                consumo=consumo,
+                perdidas=perdidas
             )
             if resultado.get("status") == "ok":
                 datos = resultado.get("data", {})

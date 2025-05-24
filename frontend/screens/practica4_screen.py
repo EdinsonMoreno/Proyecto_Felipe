@@ -52,9 +52,9 @@ class Practica4Screen(Screen):
                 self.tiempo_ebullicion = f"{datos.get('tiempo_hasta_ebullicion', 0):.1f} min"
                 self.energia_consumida = f"{datos.get('energia_consumida', 0):.1f} Wh"
                 self.vapor_generado = f"{datos.get('vapor_generado', 0):.1f} ml"
-                # Eficiencia simple: energía útil/energía suministrada
-                energia_util = float(datos.get('vapor_generado', 0)) * 2260 / 1000  # ml a kg, L_v=2260 kJ/kg
-                energia_suministrada = float(datos.get('energia_consumida', 0)) * 3600  # Wh a J
+                # Eficiencia real: energía útil (evaporación) / energía suministrada total
+                energia_util = float(datos.get('vapor_generado', 0)) / 1000 * 2260000  # ml a kg, L_v=2260000 J/kg
+                energia_suministrada = float(potencia) * float(tiempo) * 60  # W * min a J
                 self.eficiencia = f"{(energia_util/energia_suministrada*100):.1f} %" if energia_suministrada > 0 else "0 %"
                 # Barra de temperatura
                 temp = float(datos.get('temperatura_maxima', 0))
