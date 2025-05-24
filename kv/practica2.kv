@@ -32,11 +32,14 @@
                 orientation: 'vertical'
                 spacing: 14
                 size_hint_x: 0.5
+                height: self.minimum_height
 
                 Label:
                     text: "Turbidez inicial (NTU)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
+                    size_hint_y: None
+                    height: 28
                 TextInput:
                     id: input_turbidez
                     hint_text: "Ej: 50"
@@ -44,11 +47,15 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
+                    size_hint_y: None
+                    height: 32
 
                 Label:
                     text: "Volumen de agua (L)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
+                    size_hint_y: None
+                    height: 28
                 TextInput:
                     id: input_volumen
                     hint_text: "Ej: 20"
@@ -56,6 +63,8 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
+                    size_hint_y: None
+                    height: 32
 
                 Label:
                     text: "Capas activas"

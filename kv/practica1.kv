@@ -32,11 +32,14 @@
                 orientation: 'vertical'
                 spacing: 14
                 size_hint_x: 0.5
+                height: self.minimum_height
 
                 Label:
                     text: "Radiación solar (W/m²)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
+                    size_hint_y: None
+                    height: 28
                 TextInput:
                     id: input_radiacion
                     hint_text: "Ej: 800"
@@ -44,11 +47,15 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
+                    size_hint_y: None
+                    height: 32
 
                 Label:
                     text: "Área del panel (m²)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
+                    size_hint_y: None
+                    height: 28
                 TextInput:
                     id: input_area
                     hint_text: "Ej: 1.5"
@@ -56,11 +63,15 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
+                    size_hint_y: None
+                    height: 32
 
                 Label:
                     text: "Eficiencia del panel (%)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
+                    size_hint_y: None
+                    height: 28
                 TextInput:
                     id: input_eficiencia
                     hint_text: "Ej: 18"
@@ -68,11 +79,15 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
+                    size_hint_y: None
+                    height: 32
 
                 Label:
                     text: "Consumo de carga (Wh/día)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
+                    size_hint_y: None
+                    height: 28
                 TextInput:
                     id: input_consumo
                     hint_text: "Ej: 1200"
@@ -80,11 +95,15 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
+                    size_hint_y: None
+                    height: 32
 
                 Label:
                     text: "Pérdidas estimadas (%)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
+                    size_hint_y: None
+                    height: 28
                 TextInput:
                     id: input_perdidas
                     hint_text: "Ej: 15"
@@ -92,6 +111,8 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
+                    size_hint_y: None
+                    height: 32
 
             # Resultados a la derecha
             BoxLayout:
