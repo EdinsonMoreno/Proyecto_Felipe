@@ -20,7 +20,7 @@ SOMBRA = (0, 0, 0, 60)
 bateria_nivel = 0
 rayos_anim = 0
 
-# Función para dibujar gradiente simulado
+# Gradiente lineal vertical/horizontal
 def gradiente_rect(surface, rect, color1, color2, vertical=True):
     x, y, w, h = rect
     for i in range(h if vertical else w):
@@ -33,59 +33,85 @@ def gradiente_rect(surface, rect, color1, color2, vertical=True):
         else:
             pygame.draw.line(surface, (r, g, b), (x + i, y), (x + i, y + h))
 
-while True:
-    screen.fill(BLANCO)
-    # Sombra panel
-    sombra_panel = pygame.Surface((140, 70), pygame.SRCALPHA)
-    pygame.draw.ellipse(sombra_panel, (0,0,0,40), (0, 40, 140, 30))
-    screen.blit(sombra_panel, (340, 420))
-    # Panel solar con gradiente y textura
-    gradiente_rect(screen, (350, 350, 140, 70), (80, 180, 255), (30, 120, 220))
-    pygame.draw.rect(screen, AZUL_OSCURO, (350, 350, 140, 70), 3, border_radius=12)
-    # Líneas diagonales (textura)
+def draw_panel(surface):
+    # Sombra
+    sombra_panel = pygame.Surface((160, 80), pygame.SRCALPHA)
+    pygame.draw.ellipse(sombra_panel, (0,0,0,40), (0, 50, 160, 30))
+    surface.blit(sombra_panel, (340, 420))
+    # Panel con gradiente y textura diagonal
+    panel = pygame.Surface((140, 70), pygame.SRCALPHA)
+    gradiente_rect(panel, (0,0,140,70), (80, 180, 255), (30, 120, 220))
     for i in range(0, 140, 14):
-        pygame.draw.line(screen, (120,180,255), (350+i, 350), (350+i-30, 420), 2)
-    # Etiqueta panel
+        pygame.draw.line(panel, (120,180,255,80), (i, 0), (i-30, 70), 2)
+    # Reflejo
+    pygame.draw.arc(panel, (255,255,255,80), (10,10,120,50), math.radians(200), math.radians(320), 8)
+    pygame.draw.rect(panel, AZUL_OSCURO, (0,0,140,70), 3, border_radius=12)
+    surface.blit(panel, (350, 350))
+    # Etiqueta
     label_panel = font_small.render("Panel Solar", True, AZUL_OSCURO)
-    screen.blit(label_panel, (355, 335))
-    # Sol con halo y rayos
+    surface.blit(label_panel, (355, 335))
+    # Conectores técnicos
+    pygame.draw.rect(surface, (80,80,80), (485, 380, 18, 12), border_radius=4)
+    pygame.draw.line(surface, (60,60,60), (503,386), (720,400), 6)
+
+def draw_sun(surface, anim):
+    # Halo y rayos desenfocados
     for r in range(60, 100, 10):
-        pygame.draw.circle(screen, (255,255,180,40), (170, 120), r, width=0)
-    pygame.draw.circle(screen, AMARILLO, (170, 120), 60)
+        pygame.draw.circle(surface, (255,255,180,30), (170, 120), r, width=0)
+    pygame.draw.circle(surface, AMARILLO, (170, 120), 60)
     for i in range(16):
-        ang = math.radians(i*22.5+rayos_anim*2)
+        ang = math.radians(i*22.5+anim*2)
         x1 = 170 + 80*math.cos(ang)
         y1 = 120 + 80*math.sin(ang)
-        pygame.draw.line(screen, AMARILLO_CLARO, (170,120), (x1,y1), 8)
+        pygame.draw.line(surface, (255,255,180,120), (170,120), (x1,y1), 10)
+        pygame.draw.line(surface, (255,255,120), (170,120), (x1,y1), 4)
     # Rayos al panel
     for i in range(5):
-        pygame.draw.line(screen, (255,255,120), (170,180), (420+20*i, 350), 4)
-    # Etiqueta sol
+        pygame.draw.line(surface, (255,255,120), (170,180), (420+20*i, 350), 4)
+    # Etiqueta
     label_sol = font_small.render("Sol", True, (200, 180, 40))
-    screen.blit(label_sol, (120, 70))
-    # Batería con gradiente y segmentos
-    gradiente_rect(screen, (700, 320, 60, 180), (200,200,200), (120,120,120))
-    pygame.draw.rect(screen, GRIS_OSCURO, (700, 320, 60, 180), 4, border_radius=18)
-    pygame.draw.rect(screen, NEGRO, (715, 305, 30, 20), 0, border_radius=6)
+    surface.blit(label_sol, (120, 70))
+
+def draw_battery(surface, nivel):
+    # Sombra
+    sombra_bat = pygame.Surface((80, 40), pygame.SRCALPHA)
+    pygame.draw.ellipse(sombra_bat, (0,0,0,40), (0, 20, 80, 20))
+    surface.blit(sombra_bat, (695, 490))
+    # Batería con gradiente y efecto vidrio
+    bat = pygame.Surface((60, 180), pygame.SRCALPHA)
+    gradiente_rect(bat, (0,0,60,180), (200,200,200), (120,120,120))
+    pygame.draw.rect(bat, GRIS_OSCURO, (0,0,60,180), 4, border_radius=18)
+    pygame.draw.rect(bat, NEGRO, (15,-15,30,20), 0, border_radius=6)
     # Barra de carga segmentada
     for i in range(5):
-        color = (60, 200, 80) if bateria_nivel > i*30 else (180, 220, 180)
-        pygame.draw.rect(screen, color, (710, 470-i*30, 40, 24), border_radius=6)
-        pygame.draw.rect(screen, (80, 120, 80), (710, 470-i*30, 40, 24), 2, border_radius=6)
-    # Etiqueta batería
+        color = (60, 200, 80) if nivel > i*30 else (180, 220, 180)
+        pygame.draw.rect(bat, color, (10, 150-i*30, 40, 24), border_radius=6)
+        pygame.draw.rect(bat, (80, 120, 80), (10, 150-i*30, 40, 24), 2, border_radius=6)
+    # Reflejo
+    pygame.draw.arc(bat, (255,255,255,80), (8,10,44,160), math.radians(200), math.radians(320), 8)
+    surface.blit(bat, (700, 320))
+    # Etiqueta
     label_bat = font_small.render("Batería", True, AZUL_OSCURO)
-    screen.blit(label_bat, (705, 510))
+    surface.blit(label_bat, (705, 510))
+
+def draw_flow(surface, anim):
     # Flechas de flujo (panel a batería)
     for i in range(3):
-        start = (420+20*i, 385)
+        start = (485, 386+6*i)
         end = (720, 400+20*i)
-        pygame.draw.line(screen, (80,180,255), start, end, 6)
-        # Flecha
+        pygame.draw.line(surface, (80,180,255), start, end, 6)
         ang = math.atan2(end[1]-start[1], end[0]-start[0])
         tip = (end[0], end[1])
         left = (end[0]-14*math.cos(ang-0.4), end[1]-14*math.sin(ang-0.4))
         right = (end[0]-14*math.cos(ang+0.4), end[1]-14*math.sin(ang+0.4))
-        pygame.draw.polygon(screen, (80,180,255), [tip, left, right])
+        pygame.draw.polygon(surface, (80,180,255), [tip, left, right])
+
+while True:
+    screen.fill(BLANCO)
+    draw_panel(screen)
+    draw_sun(screen, rayos_anim)
+    draw_battery(screen, bateria_nivel)
+    draw_flow(screen, rayos_anim)
     # Animación de carga
     if bateria_nivel < 150:
         bateria_nivel += 1.2
