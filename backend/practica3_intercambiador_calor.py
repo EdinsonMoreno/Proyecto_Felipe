@@ -48,7 +48,7 @@ def calcular_resultados(temperatura_inicial, masa_agua, potencia_solar, tiempo_e
             temperatura_final = tcaliente
         if temperatura_final < tfrio:
             temperatura_final = tfrio
-        # Eficiencia térmica basada en temperaturas
+        # Eficiencia térmica basada SOLO en temperaturas inicial y final del fluido frío respecto al máximo posible
         eficiencia = ((temperatura_final - tfrio) / (tcaliente - tfrio)) * 100 if (tcaliente - tfrio) > 0 else 0.0
         variacion = (temperatura_final - tfrio) / tiempo_exposicion if tiempo_exposicion > 0 else 0.0
         datos = {
