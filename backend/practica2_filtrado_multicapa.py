@@ -5,10 +5,10 @@ Módulo determinista y reactivo. Corrección de validaciones y tolerancia a entr
 
 from typing import Dict
 
-def calcular_resultados(turbidez_inicial, volumen, tiempo) -> Dict[str, object]:
+def calcular_resultados(turbidez_inicial, volumen, tiempo, grava_activa=True, arena_activa=True, carbon_activo=True) -> Dict[str, object]:
     """
     Calcula la turbidez final y la eficiencia de remoción de sólidos en el filtrado multicapa.
-    Tolerante a entradas nulas o erróneas. Siempre retorna datos válidos.
+    La eficiencia depende de volumen, turbidez inicial, tiempo y capas activas.
     """
     try:
         try:
@@ -23,8 +23,21 @@ def calcular_resultados(turbidez_inicial, volumen, tiempo) -> Dict[str, object]:
             tiempo = int(tiempo) if tiempo is not None else 95
         except Exception:
             tiempo = 95
-        turbidez_final = max(turbidez_inicial * 0.07, 1.0)
-        eficiencia = ((turbidez_inicial - turbidez_final) / turbidez_inicial) * 100 if turbidez_inicial > 0 else 0.0
+        # Capas activas
+        grava_activa = bool(grava_activa)
+        arena_activa = bool(arena_activa)
+        carbon_activo = bool(carbon_activo)
+        # Eficiencia base
+        eficiencia_base = 93.0
+        penalizacion_vol = max(0, (volumen - 10) * 1.5)
+        penalizacion_turbidez = max(0, (turbidez_inicial - 50) * 0.25)
+        bonificacion_tiempo = min(10, (tiempo - 60) * 0.2) if tiempo > 60 else 0
+        # Penalización/bonificación por capas activas
+        capas_activas = sum([grava_activa, arena_activa, carbon_activo])
+        bonificacion_capas = (capas_activas - 3) * 7  # -7% por cada capa inactiva, +0 si todas activas
+        eficiencia = eficiencia_base - penalizacion_vol - penalizacion_turbidez + bonificacion_tiempo + bonificacion_capas
+        eficiencia = max(0, min(eficiencia, 99.9))
+        turbidez_final = max(turbidez_inicial * (1 - eficiencia/100), 1.0)
         datos = {
             "tiempo_filtrado": tiempo,
             "turbidez_inicial": round(turbidez_inicial, 1),
