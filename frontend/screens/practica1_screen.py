@@ -128,68 +128,96 @@ class Practica1Screen(Screen):
         from kivy.uix.widget import Widget
         from kivy.uix.popup import Popup
         from kivy.uix.button import Button
-        from kivy.graphics import Ellipse, Color, Rectangle, Line
+        from kivy.graphics import Ellipse, Color, Rectangle, Line, RoundedRectangle
         from kivy.clock import Clock
-        class SolarAnimada(Widget):
+        import math
+        class SolarRealista(Widget):
             def __init__(self, **kwargs):
                 super().__init__(**kwargs)
                 self.size = (800, 500)
                 with self.canvas.before:
                     Color(1, 1, 1, 1)
                     Rectangle(pos=self.pos, size=self.size)
-                self.sol_pos = [100, 400]
+                # Posiciones y estados
+                self.sol_pos = [160, 400]
+                self.rayos_ang = [i*math.pi/8 for i in range(16)]
+                self.rayos_long = [60+10*math.sin(i) for i in self.rayos_ang]
                 self.panel_pos = [500, 180]
-                self.bateria_pos = [650, 120]
-                self.bateria_visible = False
+                self.bateria_pos = [670, 120]
                 self.bateria_nivel = 0
-                with self.canvas:
-                    # Panel inclinado
-                    Color(0.18, 0.52, 0.87, 1)
-                    self.panel = Rectangle(pos=self.panel_pos, size=(120, 40))
-                    # Sol
-                    Color(1, 1, 0, 1)
-                    self.sol = Ellipse(pos=self.sol_pos, size=(90, 90))
-                    # Halo
-                    Color(1, 1, 0, 0.2)
-                    self.halo = Ellipse(pos=(self.sol_pos[0]-20, self.sol_pos[1]-20), size=(130, 130))
-                    # Batería (inicialmente invisible)
-                    self.bateria = Rectangle(pos=self.bateria_pos, size=(40, 100))
-                    # Barras de carga
-                    self.barras = [Rectangle(pos=(self.bateria_pos[0]+5, self.bateria_pos[1]+10+20*i), size=(30, 16)) for i in range(4)]
+                self.bateria_visible = False
                 self.t = 0
+                with self.canvas:
+                    # Panel solar con textura de celdas
+                    Color(0.12, 0.36, 0.7, 1)
+                    self.panel = Rectangle(pos=self.panel_pos, size=(120, 60))
+                    # Celdas
+                    self.celdas = []
+                    for i in range(4):
+                        for j in range(2):
+                            Color(0.18, 0.52, 0.87, 1)
+                            self.celdas.append(Rectangle(pos=(self.panel_pos[0]+10+25*i, self.panel_pos[1]+10+20*j), size=(20, 16)))
+                    # Borde panel
+                    Color(0.1, 0.1, 0.1, 1)
+                    Line(rectangle=(self.panel_pos[0], self.panel_pos[1], 120, 60), width=2)
+                    # Batería cilíndrica (inicialmente vacía)
+                    Color(0.3, 0.3, 0.3, 1)
+                    self.bateria = RoundedRectangle(pos=self.bateria_pos, size=(40, 100), radius=[20])
+                    # Tapa batería
+                    Color(0.5, 0.5, 0.5, 1)
+                    self.tapa = Ellipse(pos=(self.bateria_pos[0], self.bateria_pos[1]+90), size=(40, 20))
+                    # Nivel de carga (verde, animado)
+                    Color(0.2, 0.8, 0.2, 0.85)
+                    self.nivel = Rectangle(pos=(self.bateria_pos[0]+5, self.bateria_pos[1]+10), size=(30, 0))
+                # Sol y halo
+                with self.canvas.after:
+                    # Halo
+                    Color(1, 1, 0.5, 0.18)
+                    self.halo = Ellipse(pos=(self.sol_pos[0]-40, self.sol_pos[1]-40), size=(170, 170))
+                    # Sol
+                    Color(1, 0.95, 0.3, 1)
+                    self.sol = Ellipse(pos=self.sol_pos, size=(90, 90))
+                    # Rayos
+                    self.rayos = []
+                    for ang, long in zip(self.rayos_ang, self.rayos_long):
+                        Color(1, 0.95, 0.3, 0.7)
+                        x0 = self.sol_pos[0]+45
+                        y0 = self.sol_pos[1]+45
+                        x1 = x0 + long*math.cos(ang)
+                        y1 = y0 + long*math.sin(ang)
+                        self.rayos.append(Line(points=[x0, y0, x1, y1], width=3))
                 self._event = Clock.schedule_interval(self.animar, 1/60)
             def animar(self, dt):
-                # Sol baja hacia el panel
-                if self.sol_pos[1] > 220:
-                    self.sol_pos[1] -= 3
+                # Sol baja y rayos giran
+                if self.sol_pos[1] > 250:
+                    self.sol_pos[1] -= 2.5
                     self.sol.pos = self.sol_pos
-                    self.halo.pos = (self.sol_pos[0]-20, self.sol_pos[1]-20)
+                    self.halo.pos = (self.sol_pos[0]-40, self.sol_pos[1]-40)
+                    # Rayos giran
+                    for i, (ang, long) in enumerate(zip(self.rayos_ang, self.rayos_long)):
+                        ang2 = ang + self.t*0.7
+                        x0 = self.sol_pos[0]+45
+                        y0 = self.sol_pos[1]+45
+                        x1 = x0 + long*math.cos(ang2)
+                        y1 = y0 + long*math.sin(ang2)
+                        self.rayos[i].points = [x0, y0, x1, y1]
                 else:
-                    # Mostrar batería y llenarla por segmentos
-                    self.bateria_visible = True
-                    if self.bateria_nivel < 4 and self.t > 1.5:
-                        self.bateria_nivel = min(4, int((self.t-1.5)//0.7)+1)
-                    # Dibujar barras de carga
-                    for i, barra in enumerate(self.barras):
-                        if i < self.bateria_nivel:
-                            barra.size = (30, 16)
-                            barra.pos = (self.bateria_pos[0]+5, self.bateria_pos[1]+10+20*i)
-                            Color(0.2, 0.8, 0.2, 1)
-                        else:
-                            barra.size = (0, 0)
-                    # Batería contorno
-                    Color(0.1, 0.1, 0.1, 1)
-                    Line(rectangle=(self.bateria_pos[0], self.bateria_pos[1], 40, 100), width=2)
+                    # Batería se llena por bloques
+                    if self.bateria_nivel < 90:
+                        self.bateria_nivel += 1.5
+                        self.nivel.size = (30, self.bateria_nivel)
+                    # Efecto de brillo en tapa
+                    self.tapa.pos = (self.bateria_pos[0], self.bateria_pos[1]+90+self.bateria_nivel/10)
                 self.t += dt
-                if self.t > 7:
+                if self.t > 8:
                     if self._event:
                         self._event.cancel()
             def stop(self):
                 if hasattr(self, '_event') and self._event:
                     self._event.cancel()
-        content = SolarAnimada()
+        content = SolarRealista()
         popup = Popup(
-            title="Animación – Práctica 1",
+            title="Animación – Energía Solar (Práctica 1)",
             content=content,
             background="atlas://data/images/defaulttheme/button",
             size_hint=(None, None), size=(800, 500),
