@@ -49,3 +49,409 @@ Actualizaciones:
 23/05/2025: Se documenta la auditoría y refactorización de seguridad y robustez en todos los backends. El frontend debe manejar los nuevos formatos de retorno de error.
 
 (Actualiza este archivo a medida que se agreguen nuevas prácticas o cambios relevantes.)
+
+from kivy.uix.screenmanager import Screen
+from kivy.properties import StringProperty, NumericProperty
+from kivy.lang import Builder
+
+from backend import practica1_balance_energetico as be
+
+class Practica1Screen(Screen):
+    # Propiedades para mostrar resultados
+    energia_generada = StringProperty("")
+    energia_util = StringProperty("")
+    diferencia = StringProperty("")
+
+    def simular_balance(self):
+        try:
+            # Obtener valores de los inputs
+            radiacion = float(self.ids.input_radiacion.text)
+            area = float(self.ids.input_area.text)
+            eficiencia = float(self.ids.input_eficiencia.text) / 100
+            consumo = float(self.ids.input_consumo.text)
+            perdidas = float(self.ids.input_perdidas.text) / 100
+
+            # Lógica de simulación usando el backend
+            be.iniciar_medicion(radiacion, area, eficiencia, perdidas)
+            datos = be.obtener_datos()
+            # datos esperado: {'energia_generada': ..., 'energia_util': ..., 'diferencia': ...}
+
+            self.energia_generada = f"{datos.get('energia_generada', 0):.2f} Wh"
+            self.energia_util = f"{datos.get('energia_util', 0):.2f} Wh"
+            self.diferencia = f"{datos.get('diferencia', 0):.2f} Wh"
+        except Exception as e:
+            self.energia_generada = "Error en los datos"
+            self.energia_util = ""
+            self.diferencia = ""
+
+<Practica1Screen>:
+    name: "practica1"
+    canvas.before:
+        Color:
+            rgba: (240/255, 240/255, 240/255, 1)  # Fondo #f0f0f0
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: [40, 30, 40, 30]
+        spacing: 20
+
+        Label:
+            text: "Práctica 1 – Balance energético del sistema fotovoltaico"
+            font_size: '22sp'
+            color: (34/255, 34/255, 34/255, 1)
+            bold: True
+            size_hint_y: None
+            height: self.texture_size[1] + 20
+
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 40
+
+            # Inputs a la izquierda
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: 14
+                size_hint_x: 0.5
+
+                Label:
+                    text: "Radiación solar (W/m²)"
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+                TextInput:
+                    id: input_radiacion
+                    hint_text: "Ej: 800"
+                    input_filter: 'float'
+                    background_color: (1,1,1,1)
+                    foreground_color: (34/255, 34/255, 34/255, 1)
+                    multiline: False
+
+                Label:
+                    text: "Área del panel (m²)"
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+                TextInput:
+                    id: input_area
+                    hint_text: "Ej: 1.5"
+                    input_filter: 'float'
+                    background_color: (1,1,1,1)
+                    foreground_color: (34/255, 34/255, 34/255, 1)
+                    multiline: False
+
+                Label:
+                    text: "Eficiencia del panel (%)"
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+                TextInput:
+                    id: input_eficiencia
+                    hint_text: "Ej: 18"
+                    input_filter: 'float'
+                    background_color: (1,1,1,1)
+                    foreground_color: (34/255, 34/255, 34/255, 1)
+                    multiline: False
+
+                Label:
+                    text: "Consumo de carga (Wh/día)"
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+                TextInput:
+                    id: input_consumo
+                    hint_text: "Ej: 1200"
+                    input_filter: 'float'
+                    background_color: (1,1,1,1)
+                    foreground_color: (34/255, 34/255, 34/255, 1)
+                    multiline: False
+
+                Label:
+                    text: "Pérdidas estimadas (%)"
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+                TextInput:
+                    id: input_perdidas
+                    hint_text: "Ej: 15"
+                    input_filter: 'float'
+                    background_color: (1,1,1,1)
+                    foreground_color: (34/255, 34/255, 34/255, 1)
+                    multiline: False
+
+            # Resultados a la derecha
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: 18
+                size_hint_x: 0.5
+                padding: [20, 10, 20, 10]
+                canvas.before:
+                    Color:
+                        rgba: (72/255, 219/255, 251/255, 0.12)  # #48dbfb suave
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [12]
+
+                Label:
+                    text: "Resultados"
+                    font_size: '18sp'
+                    color: (46/255, 134/255, 222/255, 1)
+                    bold: True
+
+                Label:
+                    text: "Energía generada: [b]{}[/b]".format(root.energia_generada)
+                    markup: True
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+
+                Label:
+                    text: "Energía útil después de pérdidas: [b]{}[/b]".format(root.energia_util)
+                    markup: True
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+
+                Label:
+                    text: "Diferencia generación-consumo: [b]{}[/b]".format(root.diferencia)
+                    markup: True
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+
+        # Botón de simulación
+        Button:
+            text: "Simular"
+            size_hint: (0.3, None)
+            height: 48
+            pos_hint: {'center_x': 0.5}
+            background_color: (16/255, 172/255, 132/255, 1)  # #10ac84
+            color: (1,1,1,1)
+            font_size: '18sp'
+            on_release: root.simular_balance()
+
+        # Botón volver
+        Button:
+            text: "Volver"
+            size_hint: (0.2, None)
+            height: 42
+            pos_hint: {'center_x': 0.5}
+            background_color: (46/255, 134/255, 222/255, 1)  # #2e86de
+            color: (1,1,1,1)
+            font_size: '16sp'
+            on_release: app.root.current = "main"
+
+from kivy.uix.screenmanager import Screen
+from kivy.properties import StringProperty, BooleanProperty
+from backend import practica2_filtrado_multicapa as filtrado
+
+class Practica2Screen(Screen):
+    turbidez_final = StringProperty("")
+    tiempo_filtrado = StringProperty("")
+    eficiencia = StringProperty("")
+    mensaje_error = StringProperty("")
+
+    grava_activa = BooleanProperty(True)
+    arena_activa = BooleanProperty(True)
+    carbon_activo = BooleanProperty(True)
+
+    def simular_filtrado(self):
+        try:
+            turbidez_inicial = float(self.ids.input_turbidez.text)
+            volumen = float(self.ids.input_volumen.text)
+            capas = []
+            if self.grava_activa:
+                capas.append("grava")
+            if self.arena_activa:
+                capas.append("arena")
+            if self.carbon_activo:
+                capas.append("carbon")
+
+            filtrado.iniciar_filtrado(turbidez_inicial, volumen, capas)
+            resultado = filtrado.obtener_datos()
+            if resultado.get("status") == "ok":
+                datos = resultado.get("data", {})
+                self.turbidez_final = f"{datos.get('turbidez_final', 0):.2f} NTU"
+                self.tiempo_filtrado = f"{datos.get('tiempo_filtrado', 0):.1f} min"
+                self.eficiencia = f"{datos.get('eficiencia', 0):.1f} %"
+                self.mensaje_error = ""
+            else:
+                self.turbidez_final = ""
+                self.tiempo_filtrado = ""
+                self.eficiencia = ""
+                self.mensaje_error = resultado.get("message", "Error en la simulación")
+        except Exception:
+            self.turbidez_final = ""
+            self.tiempo_filtrado = ""
+            self.eficiencia = ""
+            self.mensaje_error = "Datos inválidos"
+
+<Practica2Screen>:
+    name: "practica2"
+    canvas.before:
+        Color:
+            rgba: (240/255, 240/255, 240/255, 1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: [40, 30, 40, 30]
+        spacing: 20
+
+        Label:
+            text: "Práctica 2 – Simulación del sistema de filtrado multicapa"
+            font_size: '22sp'
+            color: (34/255, 34/255, 34/255, 1)
+            bold: True
+            size_hint_y: None
+            height: self.texture_size[1] + 20
+
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 40
+
+            # Inputs a la izquierda
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: 14
+                size_hint_x: 0.5
+
+                Label:
+                    text: "Turbidez inicial (NTU)"
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+                TextInput:
+                    id: input_turbidez
+                    hint_text: "Ej: 50"
+                    input_filter: 'float'
+                    background_color: (1,1,1,1)
+                    foreground_color: (34/255, 34/255, 34/255, 1)
+                    multiline: False
+
+                Label:
+                    text: "Volumen de agua (L)"
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+                TextInput:
+                    id: input_volumen
+                    hint_text: "Ej: 20"
+                    input_filter: 'float'
+                    background_color: (1,1,1,1)
+                    foreground_color: (34/255, 34/255, 34/255, 1)
+                    multiline: False
+
+                Label:
+                    text: "Capas activas"
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+                    size_hint_y: None
+                    height: 24
+
+                BoxLayout:
+                    orientation: 'horizontal'
+                    spacing: 10
+                    size_hint_y: None
+                    height: 32
+
+                    CheckBox:
+                        id: check_grava
+                        active: root.grava_activa
+                        on_active: root.grava_activa = self.active
+                    Label:
+                        text: "Grava"
+                        color: (34/255, 34/255, 34/255, 1)
+                        font_size: '15sp'
+                        size_hint_x: None
+                        width: 60
+
+                    CheckBox:
+                        id: check_arena
+                        active: root.arena_activa
+                        on_active: root.arena_activa = self.active
+                    Label:
+                        text: "Arena"
+                        color: (34/255, 34/255, 34/255, 1)
+                        font_size: '15sp'
+                        size_hint_x: None
+                        width: 60
+
+                    CheckBox:
+                        id: check_carbon
+                        active: root.carbon_activo
+                        on_active: root.carbon_activo = self.active
+                    Label:
+                        text: "Carbón activado"
+                        color: (34/255, 34/255, 34/255, 1)
+                        font_size: '15sp'
+                        size_hint_x: None
+                        width: 120
+
+            # Resultados a la derecha
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: 18
+                size_hint_x: 0.5
+                padding: [20, 10, 20, 10]
+                canvas.before:
+                    Color:
+                        rgba: (72/255, 219/255, 251/255, 0.12)
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [12]
+
+                Label:
+                    text: "Resultados"
+                    font_size: '18sp'
+                    color: (46/255, 134/255, 222/255, 1)
+                    bold: True
+
+                Label:
+                    text: "Turbidez final: [b]{}[/b]".format(root.turbidez_final)
+                    markup: True
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+
+                Label:
+                    text: "Tiempo de filtrado: [b]{}[/b]".format(root.tiempo_filtrado)
+                    markup: True
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+
+                Label:
+                    text: "Eficiencia del sistema: [b]{}[/b]".format(root.eficiencia)
+                    markup: True
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+
+                Label:
+                    text: root.mensaje_error
+                    color: (1, 0, 0, 1)
+                    font_size: '15sp'
+
+                # Imagen opcional del sistema de filtrado
+                Image:
+                    source: "assets/images/filtrado_esquema.png"
+                    allow_stretch: True
+                    keep_ratio: True
+                    size_hint_y: None
+                    height: 120
+
+        # Botón de simulación
+        Button:
+            text: "Simular"
+            size_hint: (0.3, None)
+            height: 48
+            pos_hint: {'center_x': 0.5}
+            background_color: (16/255, 172/255, 132/255, 1)
+            color: (1,1,1,1)
+            font_size: '18sp'
+            on_release: root.simular_filtrado()
+
+        # Botón volver
+        Button:
+            text: "Volver"
+            size_hint: (0.2, None)
+            height: 42
+            pos_hint: {'center_x': 0.5}
+            background_color: (46/255, 134/255, 222/255, 1)
+            color: (1,1,1,1)
+            font_size: '16sp'
+            on_release: app.root.current = "main"

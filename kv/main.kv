@@ -1,1 +1,67 @@
+#:kivy 2.1.0
 # Layout principal de navegación
+
+<MainScreen>:
+    name: "main"
+    canvas.before:
+        Color:
+            rgba: (240/255, 240/255, 240/255, 1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: [60, 40, 60, 40]
+        spacing: 30
+
+        Label:
+            text: "Simulador de Captación y Tratamiento de Agua Lluvia"
+            font_size: '26sp'
+            color: (34/255, 34/255, 34/255, 1)
+            bold: True
+            halign: 'center'
+            valign: 'middle'
+            size_hint_y: None
+            height: self.texture_size[1] + 30
+
+        GridLayout:
+            cols: 1
+            spacing: 18
+            size_hint_y: 0.7
+
+            Button:
+                text: "Práctica 1: Balance energético"
+                background_color: (46/255, 134/255, 222/255, 1)
+                color: (1, 1, 1, 1)
+                font_size: '20sp'
+                on_release: app.root.current = 'practica1'
+
+            Button:
+                text: "Práctica 2: Filtrado multicapa"
+                background_color: (46/255, 134/255, 222/255, 1)
+                color: (1, 1, 1, 1)
+                font_size: '20sp'
+                on_release: app.root.current = 'practica2'
+
+            Button:
+                text: "Práctica 3: Intercambiador de calor"
+                background_color: (46/255, 134/255, 222/255, 1)
+                color: (1, 1, 1, 1)
+                font_size: '20sp'
+                on_release: app.root.current = 'practica3'
+
+            Button:
+                text: "Práctica 4: Caldera solar/eléctrica"
+                background_color: (46/255, 134/255, 222/255, 1)
+                color: (1, 1, 1, 1)
+                font_size: '20sp'
+                on_release: app.root.current = 'practica4'
+
+            Button:
+                text: "Práctica 5: Captación de agua lluvia"
+                background_color: (46/255, 134/255, 222/255, 1)
+                color: (1, 1, 1, 1)
+                font_size: '20sp'
+                on_release: app.root.current = 'practica5'
+
