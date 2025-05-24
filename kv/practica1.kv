@@ -32,14 +32,13 @@
                 orientation: 'vertical'
                 spacing: min(self.height*0.018, 14)
                 size_hint_x: 0.5
-                height: self.minimum_height
 
                 Label:
                     text: "Radiación solar (W/m²)"
                     color: (34/255, 34/255, 34/255, 1)
-                    font_size: str(max(self.width, self.height) * 0.015) + 'sp'
+                    font_size: '16sp'
                     size_hint_y: None
-                    height: min(self.height*0.035, 28)
+                    height: 28
                 TextInput:
                     id: input_radiacion
                     hint_text: "Ej: 800"
@@ -48,14 +47,14 @@
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
                     size_hint_y: None
-                    height: min(self.height*0.04, 32)
+                    height: 32
 
                 Label:
                     text: "Área del panel (m²)"
                     color: (34/255, 34/255, 34/255, 1)
-                    font_size: str(max(self.width, self.height) * 0.015) + 'sp'
+                    font_size: '16sp'
                     size_hint_y: None
-                    height: min(self.height*0.035, 28)
+                    height: 28
                 TextInput:
                     id: input_area
                     hint_text: "Ej: 1.5"
@@ -64,14 +63,14 @@
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
                     size_hint_y: None
-                    height: min(self.height*0.04, 32)
+                    height: 32
 
                 Label:
                     text: "Eficiencia del panel (%)"
                     color: (34/255, 34/255, 34/255, 1)
-                    font_size: str(max(self.width, self.height) * 0.015) + 'sp'
+                    font_size: '16sp'
                     size_hint_y: None
-                    height: min(self.height*0.035, 28)
+                    height: 28
                 TextInput:
                     id: input_eficiencia
                     hint_text: "Ej: 18"
@@ -80,14 +79,14 @@
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
                     size_hint_y: None
-                    height: min(self.height*0.04, 32)
+                    height: 32
 
                 Label:
                     text: "Consumo de carga (Wh/día)"
                     color: (34/255, 34/255, 34/255, 1)
-                    font_size: str(max(self.width, self.height) * 0.015) + 'sp'
+                    font_size: '16sp'
                     size_hint_y: None
-                    height: min(self.height*0.035, 28)
+                    height: 28
                 TextInput:
                     id: input_consumo
                     hint_text: "Ej: 1200"
@@ -96,14 +95,14 @@
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
                     size_hint_y: None
-                    height: min(self.height*0.04, 32)
+                    height: 32
 
                 Label:
                     text: "Pérdidas estimadas (%)"
                     color: (34/255, 34/255, 34/255, 1)
-                    font_size: str(max(self.width, self.height) * 0.015) + 'sp'
+                    font_size: '16sp'
                     size_hint_y: None
-                    height: min(self.height*0.035, 28)
+                    height: 28
                 TextInput:
                     id: input_perdidas
                     hint_text: "Ej: 15"
@@ -112,7 +111,7 @@
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
                     size_hint_y: None
-                    height: min(self.height*0.04, 32)
+                    height: 32
 
             # Resultados a la derecha
             BoxLayout:

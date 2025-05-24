@@ -32,14 +32,11 @@
                 orientation: 'vertical'
                 spacing: 14
                 size_hint_x: 0.5
-                height: self.minimum_height
 
                 Label:
                     text: "Volumen inicial de agua (ml)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
-                    size_hint_y: None
-                    height: 28
                 TextInput:
                     id: input_volumen
                     hint_text: "Ej: 2000"
@@ -47,15 +44,11 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
-                    size_hint_y: None
-                    height: 32
 
                 Label:
                     text: "Potencia de la resistencia (W)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
-                    size_hint_y: None
-                    height: 28
                 TextInput:
                     id: input_potencia
                     hint_text: "Ej: 1500"
@@ -63,15 +56,11 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
-                    size_hint_y: None
-                    height: 32
 
                 Label:
                     text: "Tiempo de operación (min)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
-                    size_hint_y: None
-                    height: 28
                 TextInput:
                     id: input_tiempo
                     hint_text: "Ej: 10"
@@ -79,8 +68,6 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
-                    size_hint_y: None
-                    height: 32
 
             # Resultados a la derecha
             BoxLayout:

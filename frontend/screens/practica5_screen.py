@@ -21,10 +21,21 @@ class Practica5Screen(Screen):
 
     def simular_captacion(self):
         try:
-            # Validar inputs si existen (ejemplo: volumen esperado, altura, etc.)
-            # Si no hay inputs, omitir validación
-            captacion.iniciar_captacion()
-            resultado = captacion.obtener_datos()
+            try:
+                intensidad_lluvia = float(self.ids.input_intensidad.text)
+                area_techo = float(self.ids.input_area.text)
+                duracion = float(self.ids.input_tiempo.text)  # Corregido aquí
+            except (ValueError, AttributeError):
+                self.mostrar_error("Todos los valores deben ser numéricos y válidos.")
+                return
+            if intensidad_lluvia <= 0 or area_techo <= 0 or duracion <= 0:
+                self.mostrar_error("Todos los valores deben ser mayores a cero.")
+                return
+            resultado = captacion.calcular_resultados(
+                intensidad_lluvia=intensidad_lluvia,
+                area_techo=area_techo,
+                duracion=duracion
+            )
             if resultado.get("status") == "ok":
                 datos = resultado.get("data", {})
                 self.volumen_captado = f"{datos.get('volumen_captado', 0):.2f} L"

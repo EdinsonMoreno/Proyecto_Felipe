@@ -26,26 +26,26 @@ class Practica4Screen(Screen):
             volumen = self.ids.input_volumen.text
             potencia = self.ids.input_potencia.text
             tiempo = self.ids.input_tiempo.text
+            temperatura_inicial = self.ids.input_temperatura.text if 'input_temperatura' in self.ids else 25.0
             # Validar y convertir
             try:
                 volumen = float(volumen)
                 potencia = float(potencia)
                 tiempo = float(tiempo)
+                temperatura_inicial = float(temperatura_inicial)
             except ValueError:
                 self.mostrar_error("Todos los valores deben ser numéricos y válidos.")
                 return
             if volumen <= 0 or potencia <= 0 or tiempo <= 0:
                 self.mostrar_error("Todos los valores deben ser mayores a cero.")
                 return
-            # Llamar backend con parámetros (ajustar backend si es necesario)
-            caldera.iniciar_caldera(modo)
-            # Sobrescribir valores simulados con los del usuario si son válidos
-            caldera._estado_caldera["volumen_agua"] = volumen / 1000  # ml a L
-            caldera._estado_caldera["masa_agua"] = volumen / 1000
-            caldera._estado_caldera["energia_entrada"] = potencia
-            # El tiempo puede influir en eficiencia, pero aquí solo se valida
-            caldera.calcular_resultados()
-            resultado = caldera.obtener_datos()
+            # Llamar backend correctamente
+            resultado = caldera.calcular_resultados(
+                temperatura_inicial=temperatura_inicial,
+                volumen_agua=volumen/1000,  # ml a L
+                energia_entrada=potencia,
+                modo=modo
+            )
             if resultado.get("status") == "ok":
                 datos = resultado.get("data", {})
                 self.temperatura_maxima = f"{datos.get('temperatura_maxima', 0):.1f} °C"

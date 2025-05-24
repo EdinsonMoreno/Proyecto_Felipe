@@ -32,21 +32,16 @@
                 orientation: 'vertical'
                 spacing: 14
                 size_hint_x: 0.5
-                height: self.minimum_height
 
                 Label:
                     text: "Fluido caliente"
                     font_size: '17sp'
                     color: (46/255, 134/255, 222/255, 1)
                     bold: True
-                    size_hint_y: None
-                    height: 28
                 Label:
                     text: "Temperatura inicial (°C)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
-                    size_hint_y: None
-                    height: 28
                 TextInput:
                     id: input_tcaliente
                     hint_text: "Ej: 70"
@@ -54,15 +49,10 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
-                    size_hint_y: None
-                    height: 32
-
                 Label:
                     text: "Caudal (L/min)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
-                    size_hint_y: None
-                    height: 28
                 TextInput:
                     id: input_caudal_caliente
                     hint_text: "Ej: 2.5"
@@ -70,22 +60,16 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
-                    size_hint_y: None
-                    height: 32
 
                 Label:
                     text: "Fluido frío"
                     font_size: '17sp'
                     color: (72/255, 219/255, 251/255, 1)
                     bold: True
-                    size_hint_y: None
-                    height: 28
                 Label:
                     text: "Temperatura inicial (°C)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
-                    size_hint_y: None
-                    height: 28
                 TextInput:
                     id: input_tfrio
                     hint_text: "Ej: 20"
@@ -93,14 +77,10 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
-                    size_hint_y: None
-                    height: 32
                 Label:
                     text: "Caudal (L/min)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
-                    size_hint_y: None
-                    height: 28
                 TextInput:
                     id: input_caudal_frio
                     hint_text: "Ej: 2.5"
@@ -108,14 +88,11 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
-                    size_hint_y: None
-                    height: 32
+
                 Label:
                     text: "Tiempo de operación (min)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
-                    size_hint_y: None
-                    height: 28
                 TextInput:
                     id: input_tiempo
                     hint_text: "Ej: 10"
@@ -123,8 +100,6 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
-                    size_hint_y: None
-                    height: 32
 
             # Resultados a la derecha
             BoxLayout:

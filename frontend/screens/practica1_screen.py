@@ -19,22 +19,35 @@ class Practica1Screen(Screen):
 
     def simular_balance(self):
         try:
-            # Validar inputs (ejemplo: radiación, área, eficiencia, consumo, pérdidas)
             try:
                 radiacion = float(self.ids.input_radiacion.text)
                 area = float(self.ids.input_area.text)
-                eficiencia = float(self.ids.input_eficiencia.text)
+                eficiencia = float(self.ids.input_eficiencia.text) / 100.0  # % a fracción
                 consumo = float(self.ids.input_consumo.text)
-                perdidas = float(self.ids.input_perdidas.text)
+                perdidas = float(self.ids.input_perdidas.text) / 100.0  # % a fracción
             except ValueError:
                 self.mostrar_error("Todos los valores deben ser numéricos y válidos.")
                 return
             if radiacion <= 0 or area <= 0 or eficiencia <= 0 or consumo < 0 or perdidas < 0:
                 self.mostrar_error("Todos los valores deben ser mayores a cero (excepto consumo y pérdidas, que pueden ser cero).")
                 return
-            # Llamar backend
-            be.iniciar_medicion()
-            resultado = be.obtener_datos()
+            # Cálculo de parámetros para el backend
+            # Suponemos 1 día de operación
+            tiempo = 24  # horas
+            # Potencia generada por el panel (W) = radiación * área * eficiencia
+            potencia_panel = radiacion * area * eficiencia
+            # Energía generada (Wh) = potencia * tiempo
+            energia_generada = potencia_panel * tiempo
+            # Tensión y corriente ficticias para el backend (ajustar si se requiere realismo)
+            tension = 12.0
+            corriente = energia_generada / (tension * tiempo) if tension * tiempo > 0 else 1.0
+            # Llamar backend con los parámetros calculados
+            resultado = be.calcular_resultados(
+                radiacion=radiacion,
+                tension=tension,
+                corriente=corriente,
+                tiempo=tiempo
+            )
             if resultado.get("status") == "ok":
                 datos = resultado.get("data", {})
                 self.energia_generada = f"{datos.get('energia_generada', 0):.2f} Wh"
