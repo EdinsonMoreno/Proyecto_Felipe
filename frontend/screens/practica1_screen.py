@@ -123,3 +123,34 @@ class Practica1Screen(Screen):
         self.energia_consumida = ""
         self.eficiencia = ""
         self.mensaje_error = ""
+
+    def mostrar_animacion(self):
+        from kivy.uix.widget import Widget
+        from kivy.uix.popup import Popup
+        from kivy.graphics import Ellipse, Color, Rectangle
+        from kivy.clock import Clock
+        class SolAnimado(Widget):
+            def __init__(self, **kwargs):
+                super().__init__(**kwargs)
+                self.size = (500, 300)
+                self.sol_pos = [20, 180]
+                self.panel_pos = [380, 60]
+                with self.canvas:
+                    Color(0.18, 0.52, 0.87, 1)  # Panel azul
+                    self.panel = Rectangle(pos=self.panel_pos, size=(80, 40))
+                    Color(1, 1, 0, 1)  # Sol amarillo
+                    self.sol = Ellipse(pos=self.sol_pos, size=(60, 60))
+                self.t = 0
+                self._event = Clock.schedule_interval(self.animar, 1/60)
+            def animar(self, dt):
+                if self.sol_pos[0] < 350:
+                    self.sol_pos[0] += 2
+                    self.sol.pos = self.sol_pos
+                self.t += dt
+                if self.t > 10:
+                    if self._event:
+                        self._event.cancel()
+        popup = Popup(title="Animación: Energía solar",
+                      content=SolAnimado(),
+                      size_hint=(None, None), size=(500, 300))
+        popup.open()
