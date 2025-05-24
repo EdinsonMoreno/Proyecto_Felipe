@@ -127,30 +127,79 @@ class Practica1Screen(Screen):
     def mostrar_animacion(self):
         from kivy.uix.widget import Widget
         from kivy.uix.popup import Popup
-        from kivy.graphics import Ellipse, Color, Rectangle
+        from kivy.uix.button import Button
+        from kivy.graphics import Ellipse, Color, Rectangle, Line
         from kivy.clock import Clock
-        class SolAnimado(Widget):
+        class SolarAnimada(Widget):
             def __init__(self, **kwargs):
                 super().__init__(**kwargs)
-                self.size = (500, 300)
-                self.sol_pos = [20, 180]
-                self.panel_pos = [380, 60]
+                self.size = (800, 500)
+                with self.canvas.before:
+                    Color(1, 1, 1, 1)
+                    Rectangle(pos=self.pos, size=self.size)
+                self.sol_pos = [100, 400]
+                self.panel_pos = [500, 180]
+                self.bateria_pos = [650, 120]
+                self.bateria_visible = False
+                self.bateria_nivel = 0
                 with self.canvas:
-                    Color(0.18, 0.52, 0.87, 1)  # Panel azul
-                    self.panel = Rectangle(pos=self.panel_pos, size=(80, 40))
-                    Color(1, 1, 0, 1)  # Sol amarillo
-                    self.sol = Ellipse(pos=self.sol_pos, size=(60, 60))
+                    # Panel inclinado
+                    Color(0.18, 0.52, 0.87, 1)
+                    self.panel = Rectangle(pos=self.panel_pos, size=(120, 40))
+                    # Sol
+                    Color(1, 1, 0, 1)
+                    self.sol = Ellipse(pos=self.sol_pos, size=(90, 90))
+                    # Halo
+                    Color(1, 1, 0, 0.2)
+                    self.halo = Ellipse(pos=(self.sol_pos[0]-20, self.sol_pos[1]-20), size=(130, 130))
+                    # Batería (inicialmente invisible)
+                    self.bateria = Rectangle(pos=self.bateria_pos, size=(40, 100))
+                    # Barras de carga
+                    self.barras = [Rectangle(pos=(self.bateria_pos[0]+5, self.bateria_pos[1]+10+20*i), size=(30, 16)) for i in range(4)]
                 self.t = 0
                 self._event = Clock.schedule_interval(self.animar, 1/60)
             def animar(self, dt):
-                if self.sol_pos[0] < 350:
-                    self.sol_pos[0] += 2
+                # Sol baja hacia el panel
+                if self.sol_pos[1] > 220:
+                    self.sol_pos[1] -= 3
                     self.sol.pos = self.sol_pos
+                    self.halo.pos = (self.sol_pos[0]-20, self.sol_pos[1]-20)
+                else:
+                    # Mostrar batería y llenarla por segmentos
+                    self.bateria_visible = True
+                    if self.bateria_nivel < 4 and self.t > 1.5:
+                        self.bateria_nivel = min(4, int((self.t-1.5)//0.7)+1)
+                    # Dibujar barras de carga
+                    for i, barra in enumerate(self.barras):
+                        if i < self.bateria_nivel:
+                            barra.size = (30, 16)
+                            barra.pos = (self.bateria_pos[0]+5, self.bateria_pos[1]+10+20*i)
+                            Color(0.2, 0.8, 0.2, 1)
+                        else:
+                            barra.size = (0, 0)
+                    # Batería contorno
+                    Color(0.1, 0.1, 0.1, 1)
+                    Line(rectangle=(self.bateria_pos[0], self.bateria_pos[1], 40, 100), width=2)
                 self.t += dt
-                if self.t > 10:
+                if self.t > 7:
                     if self._event:
                         self._event.cancel()
-        popup = Popup(title="Animación: Energía solar",
-                      content=SolAnimado(),
-                      size_hint=(None, None), size=(500, 300))
+            def stop(self):
+                if hasattr(self, '_event') and self._event:
+                    self._event.cancel()
+        content = SolarAnimada()
+        popup = Popup(
+            title="Animación – Práctica 1",
+            content=content,
+            background="atlas://data/images/defaulttheme/button",
+            size_hint=(None, None), size=(800, 500),
+            separator_color=(0, 0, 0, 1),
+            title_color=(0, 0, 0, 1)
+        )
+        btn_cerrar = Button(text="Cerrar", size_hint=(None, None), size=(100, 40), pos_hint={"right": 1, "top": 1}, background_color=(0.93, 0.49, 0.14, 1), color=(0,0,0,1), font_size=16)
+        def cerrar_popup(*a):
+            content.stop()
+            popup.dismiss()
+        btn_cerrar.bind(on_release=cerrar_popup)
+        popup._container.add_widget(btn_cerrar)
         popup.open()

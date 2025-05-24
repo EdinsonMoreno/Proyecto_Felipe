@@ -114,3 +114,66 @@ class Practica2Screen(Screen):
         self.tiempo_filtrado = ""
         self.eficiencia_remocion = ""
         self.mensaje_error = ""
+    def mostrar_animacion(self):
+        from kivy.uix.widget import Widget
+        from kivy.uix.popup import Popup
+        from kivy.uix.button import Button
+        from kivy.graphics import Ellipse, Color, Rectangle
+        from kivy.clock import Clock
+        class FiltradoAnimado(Widget):
+            def __init__(self, **kwargs):
+                super().__init__(**kwargs)
+                self.size = (800, 500)
+                with self.canvas.before:
+                    Color(1, 1, 1, 1)
+                    Rectangle(pos=self.pos, size=self.size)
+                self.gota_y = 400
+                self.capa_idx = 0
+                self.colores_capas = [(0.6,0.6,0.6,1), (0.95,0.85,0.3,1), (0.1,0.1,0.1,1)]
+                self.nombres = ['Grava', 'Arena', 'Carbón']
+                self.gota_color = [(0.2, 0.6, 0.9, 1), (0.2, 0.8, 0.6, 1), (0.7, 0.9, 1, 1), (0.8, 0.95, 1, 0.7)]
+                with self.canvas:
+                    # Capas
+                    for i, color in enumerate(self.colores_capas):
+                        Color(*color)
+                        Rectangle(pos=(350, 220-i*60), size=(100, 50))
+                    # Gota
+                    Color(*self.gota_color[0])
+                    self.gota = Ellipse(pos=(390, self.gota_y), size=(40, 60))
+                self.t = 0
+                self._event = Clock.schedule_interval(self.animar, 1/60)
+            def animar(self, dt):
+                if self.capa_idx < 3:
+                    if self.gota_y > 230 - self.capa_idx*60:
+                        self.gota_y -= 2.5
+                        self.gota.pos = (390, self.gota_y)
+                    else:
+                        self.capa_idx += 1
+                        if self.capa_idx < 4:
+                            self.canvas.remove(self.gota)
+                            with self.canvas:
+                                Color(*self.gota_color[self.capa_idx])
+                                self.gota = Ellipse(pos=(390, self.gota_y), size=(40, 60))
+                self.t += dt
+                if self.capa_idx == 3 and self.t > 2:
+                    if self._event:
+                        self._event.cancel()
+            def stop(self):
+                if hasattr(self, '_event') and self._event:
+                    self._event.cancel()
+        content = FiltradoAnimado()
+        popup = Popup(
+            title="Animación – Práctica 2",
+            content=content,
+            background="atlas://data/images/defaulttheme/button",
+            size_hint=(None, None), size=(800, 500),
+            separator_color=(0, 0, 0, 1),
+            title_color=(0, 0, 0, 1)
+        )
+        btn_cerrar = Button(text="Cerrar", size_hint=(None, None), size=(100, 40), pos_hint={"right": 1, "top": 1}, background_color=(0.93, 0.49, 0.14, 1), color=(0,0,0,1), font_size=16)
+        def cerrar_popup(*a):
+            content.stop()
+            popup.dismiss()
+        btn_cerrar.bind(on_release=cerrar_popup)
+        popup._container.add_widget(btn_cerrar)
+        popup.open()
