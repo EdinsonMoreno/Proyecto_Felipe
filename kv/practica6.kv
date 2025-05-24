@@ -1,0 +1,272 @@
+#:kivy 2.1.0
+# Layout práctica 6 - Monitor General
+
+<Practica6MonitorScreen>:
+    name: "practica6_monitor"
+    canvas.before:
+        Color:
+            rgba: (240/255, 240/255, 240/255, 1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: [min(self.width*0.08, 80), min(self.height*0.06, 50), min(self.width*0.08, 80), min(self.height*0.06, 50)]
+        spacing: min(self.height*0.04, 30)
+
+        Label:
+            text: "Práctica 6 – Monitoreo y Control General"
+            font_size: str(max(self.width, self.height) * 0.025) + 'sp'
+            color: (34/255, 34/255, 34/255, 1)
+            bold: True
+            size_hint_y: None
+            height: self.texture_size[1] + min(self.height*0.03, 20)
+
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: min(self.width*0.04, 40)
+
+            # Panel de indicadores (una fila por métrica, sin duplicados)
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: min(self.height*0.018, 14)
+                size_hint_x: 0.5
+
+                GridLayout:
+                    cols: 1
+                    spacing: 12
+                    size_hint_y: None
+                    height: self.minimum_height
+
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        spacing: 10
+                        size_hint_y: None
+                        height: 38
+                        Label:
+                            text: "Energía generada (Wh)"
+                            font_size: '18sp'
+                            color: (34/255, 34/255, 34/255, 1)
+                            bold: True
+                        Label:
+                            id: lbl_energia
+                            text: "--"
+                            font_size: '18sp'
+                            color: (16/255, 172/255, 132/255, 1)
+                            bold: True
+                        Button:
+                            text: "Gráfica"
+                            size_hint: None, None
+                            size: 90, 40
+                            background_color: (16/255, 172/255, 132/255, 1)
+                            color: (1,1,1,1)
+                            font_size: '16sp'
+                            on_press: root.mostrar_grafica_practica1()
+
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        spacing: 10
+                        size_hint_y: None
+                        height: 38
+                        Label:
+                            text: "Eficiencia panel (%)"
+                            font_size: '18sp'
+                            color: (34/255, 34/255, 34/255, 1)
+                            bold: True
+                        Label:
+                            id: lbl_eficiencia
+                            text: "--"
+                            font_size: '18sp'
+                            color: (46/255, 134/255, 222/255, 1)
+                            bold: True
+                        Button:
+                            text: "Gráfica"
+                            size_hint: None, None
+                            size: 90, 40
+                            background_color: (46/255, 134/255, 222/255, 1)
+                            color: (1,1,1,1)
+                            font_size: '16sp'
+                            on_press: root.mostrar_grafica_eficiencia()
+
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        spacing: 10
+                        size_hint_y: None
+                        height: 38
+                        Label:
+                            text: "Turbidez final (NTU)"
+                            font_size: '18sp'
+                            color: (34/255, 34/255, 34/255, 1)
+                            bold: True
+                        Label:
+                            id: lbl_turbidez
+                            text: "--"
+                            font_size: '18sp'
+                            color: (255/255, 127/255, 80/255, 1)
+                            bold: True
+                        Button:
+                            text: "Gráfica"
+                            size_hint: None, None
+                            size: 90, 40
+                            background_color: (255/255, 127/255, 80/255, 1)
+                            color: (1,1,1,1)
+                            font_size: '16sp'
+                            on_press: root.mostrar_grafica_practica2()
+
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        spacing: 10
+                        size_hint_y: None
+                        height: 38
+                        Label:
+                            text: "Temperatura final (°C)"
+                            font_size: '18sp'
+                            color: (34/255, 34/255, 34/255, 1)
+                            bold: True
+                        Label:
+                            id: lbl_tempfinal
+                            text: "--"
+                            font_size: '18sp'
+                            color: (255/255, 168/255, 1/255, 1)
+                            bold: True
+                        Button:
+                            text: "Gráfica"
+                            size_hint: None, None
+                            size: 90, 40
+                            background_color: (255/255, 168/255, 1/255, 1)
+                            color: (1,1,1,1)
+                            font_size: '16sp'
+                            on_press: root.mostrar_grafica_practica3()
+
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        spacing: 10
+                        size_hint_y: None
+                        height: 38
+                        Label:
+                            text: "Nivel tanque (%)"
+                            font_size: '18sp'
+                            color: (34/255, 34/255, 34/255, 1)
+                            bold: True
+                        Label:
+                            id: lbl_nivel
+                            text: "--"
+                            font_size: '18sp'
+                            color: (72/255, 219/255, 251/255, 1)
+                            bold: True
+                        Button:
+                            text: "Gráfica"
+                            size_hint: None, None
+                            size: 90, 40
+                            background_color: (72/255, 219/255, 251/255, 1)
+                            color: (1,1,1,1)
+                            font_size: '16sp'
+                            on_press: root.mostrar_grafica_practica5()
+
+            # Panel de controles y alertas
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: 18
+                size_hint_x: 0.5
+                padding: [20, 10, 20, 10]
+                canvas.before:
+                    Color:
+                        rgba: (230/255, 247/255, 255/255, 1)
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [12]
+
+                Label:
+                    text: "Controles climáticos"
+                    font_size: '20sp'
+                    color: 0, 0, 0, 1
+                    bold: True
+
+                BoxLayout:
+                    orientation: 'vertical'
+                    spacing: 10
+                    size_hint_y: None
+                    height: 180
+
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        spacing: 10
+                        Label:
+                            text: "Radiación solar (W/m²)"
+                            font_size: '15sp'
+                            color: 0, 0, 0, 1
+                        TextInput:
+                            id: input_radiacion
+                            hint_text: "Ej: 800"
+                            input_filter: 'float'
+                            multiline: False
+                            size_hint_x: 0.5
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        spacing: 10
+                        Label:
+                            text: "Lluvia (mm/h)"
+                            font_size: '15sp'
+                            color: 0, 0, 0, 1
+                        TextInput:
+                            id: input_lluvia
+                            hint_text: "Ej: 10"
+                            input_filter: 'float'
+                            multiline: False
+                            size_hint_x: 0.5
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        spacing: 10
+                        Label:
+                            text: "Temperatura ambiente (°C)"
+                            font_size: '15sp'
+                            color: 0, 0, 0, 1
+                        TextInput:
+                            id: input_temperatura
+                            hint_text: "Ej: 25"
+                            input_filter: 'float'
+                            multiline: False
+                            size_hint_x: 0.5
+
+                Button:
+                    text: "Simular condiciones"
+                    size_hint: (0.7, None)
+                    height: 48
+                    pos_hint: {'center_x': 0.5}
+                    background_color: (16/255, 172/255, 132/255, 1)
+                    color: (1,1,1,1)
+                    font_size: '18sp'
+                    on_release: root.simular_clima()
+
+                Button:
+                    text: "Gráfica"
+                    size_hint: None, None
+                    size: 160, 50
+                    font_size: '18sp'
+                    background_color: 0.0, 0.4, 0.4, 1
+                    color: 1,1,1,1
+                    pos_hint: {'center_x': 0.5}
+                    on_press: root.mostrar_grafica_climatica()
+
+                Label:
+                    text: "Alertas"
+                    font_size: '20sp'
+                    color: (255/255, 0, 0, 1)
+                    bold: True
+                Label:
+                    id: lbl_alertas
+                    text: "--"
+                    font_size: '15sp'
+                    color: (255/255, 0, 0, 1)
+
+        Button:
+            text: "Volver"
+            size_hint: (0.2, None)
+            height: 42
+            pos_hint: {'center_x': 0.5}
+            background_color: (46/255, 134/255, 222/255, 1)
+            color: (1,1,1,1)
+            font_size: '16sp'
+            on_release: app.root.current = "main"

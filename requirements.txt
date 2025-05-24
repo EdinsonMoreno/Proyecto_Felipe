@@ -1,5 +1,5 @@
 # Requerimientos para python-kivy-prototipo
 kivy>=2.1.0
+matplotlib
 # (Opcional para desarrollo y pruebas)
-# matplotlib>=3.0.0
 # numpy>=1.18.0
