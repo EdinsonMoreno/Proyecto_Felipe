@@ -12,31 +12,33 @@
 
     BoxLayout:
         orientation: 'vertical'
-        padding: [40, 30, 40, 30]
-        spacing: 20
+        padding: [min(self.width*0.08, 80), min(self.height*0.06, 50), min(self.width*0.08, 80), min(self.height*0.06, 50)]
+        spacing: min(self.height*0.04, 30)
 
         Label:
             text: "Práctica 5 – Simulación de captación de agua lluvia"
-            font_size: '22sp'
+            font_size: str(max(self.width, self.height) * 0.025) + 'sp'
             color: (34/255, 34/255, 34/255, 1)
             bold: True
             size_hint_y: None
-            height: self.texture_size[1] + 20
+            height: self.texture_size[1] + min(self.height*0.03, 20)
 
         BoxLayout:
             orientation: 'horizontal'
-            spacing: 40
+            spacing: min(self.width*0.04, 40)
 
-            # Inputs a la izquierda
+            # Inputs a la izquierda (vertical, estilo práctica 1)
             BoxLayout:
                 orientation: 'vertical'
-                spacing: 14
+                spacing: min(self.height*0.018, 14)
                 size_hint_x: 0.5
 
                 Label:
                     text: "Intensidad de la lluvia (mm/h)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
+                    size_hint_y: None
+                    height: 28
                 TextInput:
                     id: input_intensidad
                     hint_text: "Ej: 20"
@@ -44,11 +46,15 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
+                    size_hint_y: None
+                    height: 32
 
                 Label:
                     text: "Área del techo (m²)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
+                    size_hint_y: None
+                    height: 28
                 TextInput:
                     id: input_area
                     hint_text: "Ej: 50"
@@ -56,11 +62,15 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
+                    size_hint_y: None
+                    height: 32
 
                 Label:
                     text: "Tiempo de captación (min)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
+                    size_hint_y: None
+                    height: 28
                 TextInput:
                     id: input_tiempo
                     hint_text: "Ej: 30"
@@ -68,8 +78,10 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
+                    size_hint_y: None
+                    height: 32
 
-            # Resultados y visualización a la derecha
+            # Resultados a la derecha (idéntico a práctica 1)
             BoxLayout:
                 orientation: 'vertical'
                 spacing: 18
@@ -146,6 +158,7 @@
                     color: (1, 0, 0, 1)
                     font_size: '15sp'
 
+        # Botón de simulación
         Button:
             text: "Simular"
             size_hint: (0.3, None)
@@ -156,6 +169,7 @@
             font_size: '18sp'
             on_release: root.simular_captacion()
 
+        # Botón volver
         Button:
             text: "Volver"
             size_hint: (0.2, None)

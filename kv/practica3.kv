@@ -12,36 +12,33 @@
 
     BoxLayout:
         orientation: 'vertical'
-        padding: [40, 30, 40, 30]
-        spacing: 20
+        padding: [min(self.width*0.08, 80), min(self.height*0.06, 50), min(self.width*0.08, 80), min(self.height*0.06, 50)]
+        spacing: min(self.height*0.04, 30)
 
         Label:
             text: "Práctica 3 – Intercambiador de calor"
-            font_size: '22sp'
+            font_size: str(max(self.width, self.height) * 0.025) + 'sp'
             color: (34/255, 34/255, 34/255, 1)
             bold: True
             size_hint_y: None
-            height: self.texture_size[1] + 20
+            height: self.texture_size[1] + min(self.height*0.03, 20)
 
         BoxLayout:
             orientation: 'horizontal'
-            spacing: 40
+            spacing: min(self.width*0.04, 40)
 
-            # Inputs a la izquierda
+            # Inputs a la izquierda (vertical, estilo práctica 1)
             BoxLayout:
                 orientation: 'vertical'
-                spacing: 14
+                spacing: min(self.height*0.018, 14)
                 size_hint_x: 0.5
 
                 Label:
-                    text: "Fluido caliente"
-                    font_size: '17sp'
-                    color: (46/255, 134/255, 222/255, 1)
-                    bold: True
-                Label:
-                    text: "Temperatura inicial (°C)"
+                    text: "Temperatura inicial fluido caliente (°C)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
+                    size_hint_y: None
+                    height: 28
                 TextInput:
                     id: input_tcaliente
                     hint_text: "Ej: 70"
@@ -49,10 +46,15 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
+                    size_hint_y: None
+                    height: 32
+
                 Label:
-                    text: "Caudal (L/min)"
+                    text: "Caudal fluido caliente (L/min)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
+                    size_hint_y: None
+                    height: 28
                 TextInput:
                     id: input_caudal_caliente
                     hint_text: "Ej: 2.5"
@@ -60,16 +62,15 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
+                    size_hint_y: None
+                    height: 32
 
                 Label:
-                    text: "Fluido frío"
-                    font_size: '17sp'
-                    color: (72/255, 219/255, 251/255, 1)
-                    bold: True
-                Label:
-                    text: "Temperatura inicial (°C)"
+                    text: "Temperatura inicial fluido frío (°C)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
+                    size_hint_y: None
+                    height: 28
                 TextInput:
                     id: input_tfrio
                     hint_text: "Ej: 20"
@@ -77,10 +78,15 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
+                    size_hint_y: None
+                    height: 32
+
                 Label:
-                    text: "Caudal (L/min)"
+                    text: "Caudal fluido frío (L/min)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
+                    size_hint_y: None
+                    height: 28
                 TextInput:
                     id: input_caudal_frio
                     hint_text: "Ej: 2.5"
@@ -88,11 +94,15 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
+                    size_hint_y: None
+                    height: 32
 
                 Label:
                     text: "Tiempo de operación (min)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
+                    size_hint_y: None
+                    height: 28
                 TextInput:
                     id: input_tiempo
                     hint_text: "Ej: 10"
@@ -100,8 +110,10 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
+                    size_hint_y: None
+                    height: 32
 
-            # Resultados a la derecha
+            # Resultados a la derecha (idéntico a práctica 1)
             BoxLayout:
                 orientation: 'vertical'
                 spacing: 18

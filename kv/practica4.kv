@@ -12,31 +12,33 @@
 
     BoxLayout:
         orientation: 'vertical'
-        padding: [40, 30, 40, 30]
-        spacing: 20
+        padding: [min(self.width*0.08, 80), min(self.height*0.06, 50), min(self.width*0.08, 80), min(self.height*0.06, 50)]
+        spacing: min(self.height*0.04, 30)
 
         Label:
             text: "Práctica 4 – Simulación de caldera"
-            font_size: '22sp'
+            font_size: str(max(self.width, self.height) * 0.025) + 'sp'
             color: (34/255, 34/255, 34/255, 1)
             bold: True
             size_hint_y: None
-            height: self.texture_size[1] + 20
+            height: self.texture_size[1] + min(self.height*0.03, 20)
 
         BoxLayout:
             orientation: 'horizontal'
-            spacing: 40
+            spacing: min(self.width*0.04, 40)
 
-            # Inputs a la izquierda
+            # Inputs a la izquierda (vertical, estilo práctica 1)
             BoxLayout:
                 orientation: 'vertical'
-                spacing: 14
+                spacing: min(self.height*0.018, 14)
                 size_hint_x: 0.5
 
                 Label:
                     text: "Volumen inicial de agua (ml)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
+                    size_hint_y: None
+                    height: 28
                 TextInput:
                     id: input_volumen
                     hint_text: "Ej: 2000"
@@ -44,11 +46,15 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
+                    size_hint_y: None
+                    height: 32
 
                 Label:
                     text: "Potencia de la resistencia (W)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
+                    size_hint_y: None
+                    height: 28
                 TextInput:
                     id: input_potencia
                     hint_text: "Ej: 1500"
@@ -56,11 +62,15 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
+                    size_hint_y: None
+                    height: 32
 
                 Label:
                     text: "Tiempo de operación (min)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
+                    size_hint_y: None
+                    height: 28
                 TextInput:
                     id: input_tiempo
                     hint_text: "Ej: 10"
@@ -68,8 +78,10 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
+                    size_hint_y: None
+                    height: 32
 
-            # Resultados a la derecha
+            # Resultados a la derecha (idéntico a práctica 1)
             BoxLayout:
                 orientation: 'vertical'
                 spacing: 18
@@ -102,50 +114,11 @@
                     font_size: '16sp'
 
                 Label:
-                    text: "Energía consumida: [b]{}[/b]".format(root.energia_consumida)
-                    markup: True
-                    color: (34/255, 34/255, 34/255, 1)
-                    font_size: '16sp'
-
-                Label:
-                    text: "Vapor generado: [b]{}[/b]".format(root.vapor_generado)
-                    markup: True
-                    color: (34/255, 34/255, 34/255, 1)
-                    font_size: '16sp'
-
-                Label:
-                    text: "Eficiencia: [b]{}[/b]".format(root.eficiencia)
-                    markup: True
-                    color: (34/255, 34/255, 34/255, 1)
-                    font_size: '16sp'
-
-                # Indicador visual tipo barra de temperatura
-                BoxLayout:
-                    orientation: 'horizontal'
-                    size_hint_y: None
-                    height: 28
-                    spacing: 8
-                    Label:
-                        text: "Temp."
-                        color: (46/255, 134/255, 222/255, 1)
-                        font_size: '14sp'
-                        size_hint_x: 0.2
-                    ProgressBar:
-                        max: 1
-                        value: root.barra_temp
-                        size_hint_x: 0.7
-                        height: 18
-                    Label:
-                        text: "100°C"
-                        color: (46/255, 134/255, 222/255, 1)
-                        font_size: '14sp'
-                        size_hint_x: 0.2
-
-                Label:
                     text: root.mensaje_error
                     color: (1, 0, 0, 1)
                     font_size: '15sp'
 
+        # Botón de simulación
         Button:
             text: "Simular"
             size_hint: (0.3, None)
@@ -156,6 +129,7 @@
             font_size: '18sp'
             on_release: root.simular_caldera()
 
+        # Botón volver
         Button:
             text: "Volver"
             size_hint: (0.2, None)
