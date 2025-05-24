@@ -158,16 +158,36 @@
                     color: (1, 0, 0, 1)
                     font_size: '15sp'
 
-        # Botón de simulación
+        # Botones de acción
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 18
+            size_hint_y: None
+            height: 60
+            Button:
+                text: "Simular"
+                size_hint: None, None
+                size: dp(200), dp(60)
+                font_size: '18sp'
+                background_color: 0.18, 0.52, 0.87, 1  # Azul fuerte
+                color: 1,1,1,1
+                on_press: root.simular_captacion()
+            Button:
+                text: "Graficar"
+                size_hint: None, None
+                size: dp(200), dp(60)
+                font_size: '18sp'
+                background_color: 0.06, 0.67, 0.52, 1  # Verde institucional
+                color: 1,1,1,1
+                on_press: root.graficar_resultados()
         Button:
-            text: "Simular"
-            size_hint: (0.3, None)
-            height: 48
-            pos_hint: {'center_x': 0.5}
-            background_color: (16/255, 172/255, 132/255, 1)
-            color: (1,1,1,1)
+            text: "Limpiar"
+            size_hint: None, None
+            size: dp(200), dp(60)
             font_size: '18sp'
-            on_release: root.simular_captacion()
+            background_color: 0.93, 0.49, 0.14, 1  # Naranja
+            color: 1,1,1,1
+            on_press: root.limpiar_datos()
 
         # Botón volver
         Button:

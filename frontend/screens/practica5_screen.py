@@ -1,8 +1,10 @@
 from kivy.uix.screenmanager import Screen
-from kivy.properties import StringProperty
+from kivy.properties import StringProperty, ListProperty
 from backend import practica5_captacion_lluvia as captacion
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
+import matplotlib.pyplot as plt
+from kivy_garden.matplotlib import FigureCanvasKivyAgg
 
 class Practica5Screen(Screen):
     volumen_captado = StringProperty("")
@@ -11,6 +13,7 @@ class Practica5Screen(Screen):
     precision = StringProperty("")
     tiempo_captacion = StringProperty("")
     mensaje_error = StringProperty("")
+    grafico_valores = ListProperty([])
 
     def mostrar_error(self, mensaje):
         self.mensaje_error = mensaje
@@ -44,6 +47,11 @@ class Practica5Screen(Screen):
                 self.precision = f"{datos.get('precision_medicion', 0):.1f} %"
                 self.tiempo_captacion = f"{datos.get('tiempo_captacion', 0):.1f} min"
                 self.mensaje_error = ""
+                # Guardar valor para graficar (nivel del sensor)
+                valor_actual = datos.get('nivel_sensor', 0)
+                self.grafico_valores.append(valor_actual)
+                if len(self.grafico_valores) > 4:
+                    self.grafico_valores.pop(0)
             else:
                 self.volumen_captado = ""
                 self.nivel_sensor = ""
@@ -58,3 +66,50 @@ class Practica5Screen(Screen):
             self.precision = ""
             self.tiempo_captacion = ""
             self.mostrar_error("Datos inválidos")
+    def graficar_resultados(self):
+        import matplotlib.pyplot as plt
+        from kivy_garden.matplotlib import FigureCanvasKivyAgg
+        plt.style.use("seaborn-v0_8-muted")
+        valores = self.grafico_valores or [0]
+        fig, axs = plt.subplots(2, 2, figsize=(10, 6))
+        # Barra
+        axs[0, 0].bar(range(len(valores)), valores, color="#2e86de")
+        axs[0, 0].set_title('Nivel del sensor (Barra)')
+        axs[0, 0].set_xlabel('Simulación')
+        axs[0, 0].set_ylabel('cm')
+        axs[0, 0].grid(True)
+        # Línea
+        axs[0, 1].plot(valores, color="#10ac84", marker='o', label="Nivel del sensor")
+        axs[0, 1].set_title('Nivel del sensor (Línea)')
+        axs[0, 1].set_xlabel('Simulación')
+        axs[0, 1].set_ylabel('cm')
+        axs[0, 1].grid(True)
+        axs[0, 1].legend(loc='upper right')
+        # Puntos
+        axs[1, 0].scatter(range(len(valores)), valores, color="#ff9f43", label="Nivel del sensor")
+        axs[1, 0].set_title('Nivel del sensor (Puntos)')
+        axs[1, 0].set_xlabel('Simulación')
+        axs[1, 0].set_ylabel('cm')
+        axs[1, 0].grid(True)
+        axs[1, 0].legend(loc='upper right')
+        # Circular
+        colores = ["#2e86de", "#10ac84", "#ff9f43", "#f6e58d"]
+        axs[1, 1].pie([valores[-1], sum(valores[:-1]) or 1],
+                      labels=['Actual', 'Anteriores'], autopct='%1.1f%%', colors=colores[:2])
+        axs[1, 1].set_title('Distribución actual vs anteriores')
+        fig.tight_layout()
+        popup = Popup(title="Gráficas de resultados",
+                      content=FigureCanvasKivyAgg(fig),
+                      size_hint=(None, None), size=(900, 600))
+        popup.open()
+    def limpiar_datos(self):
+        self.grafico_valores = []
+        self.ids.input_intensidad.text = ""
+        self.ids.input_area.text = ""
+        self.ids.input_tiempo.text = ""
+        self.volumen_captado = ""
+        self.nivel_sensor = ""
+        self.volumen_estimado = ""
+        self.precision = ""
+        self.tiempo_captacion = ""
+        self.mensaje_error = ""
