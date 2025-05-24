@@ -5,6 +5,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 import matplotlib.pyplot as plt
 from kivy_garden.matplotlib import FigureCanvasKivyAgg
+import subprocess
 
 class Practica1Screen(Screen):
     energia_generada = StringProperty("")
@@ -124,33 +125,45 @@ class Practica1Screen(Screen):
         self.eficiencia = ""
         self.mensaje_error = ""
 
-    def mostrar_animacion(self):
-        from kivy.uix.widget import Widget
+    def graficar_animacion(self):
+        # Mostrar solo las gráficas de Matplotlib, no la animación
+        import matplotlib.pyplot as plt
+        from kivy_garden.matplotlib import FigureCanvasKivyAgg
         from kivy.uix.popup import Popup
-        from kivy.graphics import Ellipse, Color, Rectangle
-        from kivy.clock import Clock
-        class SolAnimado(Widget):
-            def __init__(self, **kwargs):
-                super().__init__(**kwargs)
-                self.size = (500, 300)
-                self.sol_pos = [20, 180]
-                self.panel_pos = [380, 60]
-                with self.canvas:
-                    Color(0.18, 0.52, 0.87, 1)  # Panel azul
-                    self.panel = Rectangle(pos=self.panel_pos, size=(80, 40))
-                    Color(1, 1, 0, 1)  # Sol amarillo
-                    self.sol = Ellipse(pos=self.sol_pos, size=(60, 60))
-                self.t = 0
-                self._event = Clock.schedule_interval(self.animar, 1/60)
-            def animar(self, dt):
-                if self.sol_pos[0] < 350:
-                    self.sol_pos[0] += 2
-                    self.sol.pos = self.sol_pos
-                self.t += dt
-                if self.t > 10:
-                    if self._event:
-                        self._event.cancel()
-        popup = Popup(title="Animación: Energía solar",
-                      content=SolAnimado(),
-                      size_hint=(None, None), size=(500, 300))
+        plt.style.use("seaborn-v0_8-muted")
+        valores = self.grafico_valores or [0]
+        fig, axs = plt.subplots(2, 2, figsize=(10, 6))
+        # Barra
+        axs[0, 0].bar(range(len(valores)), valores, color="#2e86de")
+        axs[0, 0].set_title('Energía generada (Barra)')
+        axs[0, 0].set_xlabel('Simulación')
+        axs[0, 0].set_ylabel('Wh')
+        axs[0, 0].grid(True)
+        # Línea
+        axs[0, 1].plot(valores, color="#10ac84", marker='o', label="Energía generada")
+        axs[0, 1].set_title('Energía generada (Línea)')
+        axs[0, 1].set_xlabel('Simulación')
+        axs[0, 1].set_ylabel('Wh')
+        axs[0, 1].grid(True)
+        axs[0, 1].legend(loc='upper right')
+        # Puntos
+        axs[1, 0].scatter(range(len(valores)), valores, color="#ff9f43", label="Energía generada")
+        axs[1, 0].set_title('Energía generada (Puntos)')
+        axs[1, 0].set_xlabel('Simulación')
+        axs[1, 0].set_ylabel('Wh')
+        axs[1, 0].grid(True)
+        axs[1, 0].legend(loc='upper right')
+        # Circular
+        colores = ["#2e86de", "#10ac84", "#ff9f43", "#f6e58d"]
+        axs[1, 1].pie([valores[-1], sum(valores[:-1]) or 1],
+                      labels=['Actual', 'Anteriores'], autopct='%1.1f%%', colors=colores[:2])
+        axs[1, 1].set_title('Distribución actual vs anteriores')
+        fig.tight_layout()
+        popup = Popup(title="Gráficas de resultados",
+                      content=FigureCanvasKivyAgg(fig),
+                      size_hint=(None, None), size=(900, 600),
+                      background_color=(1, 1, 1, 1))
         popup.open()
+
+    def mostrar_animacion(self):
+        subprocess.Popen(["python", "animacion_practica1_pygame.py"])

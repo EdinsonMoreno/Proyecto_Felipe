@@ -5,6 +5,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 import matplotlib.pyplot as plt
 from kivy_garden.matplotlib import FigureCanvasKivyAgg
+import subprocess
 
 class Practica5Screen(Screen):
     volumen_captado = StringProperty("")
@@ -114,105 +115,4 @@ class Practica5Screen(Screen):
         self.tiempo_captacion = ""
         self.mensaje_error = ""
     def mostrar_animacion(self):
-        from kivy.uix.widget import Widget
-        from kivy.uix.popup import Popup
-        from kivy.uix.button import Button
-        from kivy.graphics import Ellipse, Color, Rectangle, Line
-        from kivy.clock import Clock
-        import random
-        class CaptacionAnimada(Widget):
-            def __init__(self, **kwargs):
-                super().__init__(**kwargs)
-                self.size = (800, 500)
-                with self.canvas.before:
-                    Color(1, 1, 1, 1)
-                    Rectangle(pos=self.pos, size=self.size)
-                # Estado de gotas: lista de [x, y, velocidad, rebote]
-                self.gotas = [[random.randint(270, 530), 340, random.uniform(2, 3.5), False] for _ in range(14)]
-                self.nube_pos = (300, 340)
-                self.nube_size = (200, 60)
-                self.techo_pos = (260, 260)
-                self.techo_size = (280, 40)
-                self.tanque_pos = (370, 120)
-                self.tanque_size = (60, 110)
-                self.nivel = 0  # 0 a 1
-                self.tiempo = 0
-                with self.canvas:
-                    # Nube (varias elipses)
-                    Color(0.7, 0.7, 0.75, 1)
-                    self.nube1 = Ellipse(pos=(self.nube_pos[0], self.nube_pos[1]), size=(80, 40))
-                    self.nube2 = Ellipse(pos=(self.nube_pos[0]+40, self.nube_pos[1]+10), size=(80, 50))
-                    self.nube3 = Ellipse(pos=(self.nube_pos[0]+100, self.nube_pos[1]), size=(60, 38))
-                    # Techo (línea inclinada)
-                    Color(0.7, 0.4, 0.2, 1)
-                    self.techo = Line(points=[self.techo_pos[0], self.techo_pos[1], self.techo_pos[0]+self.techo_size[0], self.techo_pos[1]+self.techo_size[1]], width=10, cap='round')
-                    # Tanque (rectángulo)
-                    Color(0.2, 0.6, 0.8, 1)
-                    self.tanque = Rectangle(pos=self.tanque_pos, size=self.tanque_size)
-                    # Nivel de agua (rectángulo)
-                    Color(0.1, 0.5, 1, 0.7)
-                    self.agua = Rectangle(pos=(self.tanque_pos[0], self.tanque_pos[1]), size=(self.tanque_size[0], 0))
-                    # Gotas (elipses)
-                    self.gota_objs = []
-                    for x, y, _, _ in self.gotas:
-                        Color(0.2, 0.6, 0.9, 1)
-                        self.gota_objs.append(Ellipse(pos=(x, y), size=(14, 26)))
-                self._event = Clock.schedule_interval(self.animar, 1/60)
-            def animar(self, dt):
-                gotas_en_tanque = 0
-                for i, (x, y, v, rebote) in enumerate(self.gotas):
-                    # Rebote en techo
-                    techo_y = self.techo_pos[1] + self.techo_size[1] * ((x-self.techo_pos[0])/self.techo_size[0])
-                    if not rebote and y > techo_y:
-                        y -= v
-                        self.gota_objs[i].pos = (x, y)
-                        self.gotas[i][1] = y
-                    elif not rebote:
-                        # Rebota: sube un poco y luego cae al tanque
-                        self.gotas[i][3] = True
-                        self.gotas[i][2] = v * 0.7
-                        self.gotas[i][1] = techo_y - 10
-                        self.gota_objs[i].pos = (x, techo_y - 10)
-                    else:
-                        # Baja directo al tanque
-                        if y > self.tanque_pos[1]+self.tanque_size[1]:
-                            y -= v*1.2
-                            self.gota_objs[i].pos = (x, y)
-                            self.gotas[i][1] = y
-                        else:
-                            gotas_en_tanque += 1
-                            # Reiniciar gota arriba
-                            self.gotas[i][1] = 340
-                            self.gotas[i][3] = False
-                            self.gota_objs[i].pos = (x, 340)
-                # Llenar tanque según gotas que llegan
-                self.nivel += gotas_en_tanque * 0.0025
-                if self.nivel > 1:
-                    self.nivel = 1
-                # Actualizar nivel de agua
-                self.agua.size = (self.tanque_size[0], self.tanque_size[1]*self.nivel)
-                self.agua.pos = (self.tanque_pos[0], self.tanque_pos[1])
-                self.tiempo += dt
-                if self.tiempo > 12 or self.nivel >= 1:
-                    if self._event:
-                        self._event.cancel()
-            def stop(self):
-                if hasattr(self, '_event') and self._event:
-                    self._event.cancel()
-        # Popup con fondo blanco puro y botón cerrar
-        content = CaptacionAnimada()
-        popup = Popup(
-            title="Animación – Práctica 5",
-            content=content,
-            background="atlas://data/images/defaulttheme/button",
-            size_hint=(None, None), size=(800, 500),
-            separator_color=(0, 0, 0, 1),
-            title_color=(0, 0, 0, 1)
-        )
-        btn_cerrar = Button(text="Cerrar", size_hint=(None, None), size=(100, 40), pos_hint={"right": 1, "top": 1}, background_color=(0.93, 0.49, 0.14, 1), color=(0,0,0,1), font_size=16)
-        def cerrar_popup(*a):
-            content.stop()
-            popup.dismiss()
-        btn_cerrar.bind(on_release=cerrar_popup)
-        popup._container.add_widget(btn_cerrar)
-        popup.open()
+        subprocess.Popen(["python", "animacion_practica5_pygame.py"])

@@ -7,6 +7,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 import matplotlib.pyplot as plt
 from kivy_garden.matplotlib import FigureCanvasKivyAgg
+import subprocess
 
 class Practica2Screen(Screen):
     turbidez_final = StringProperty("")
@@ -114,3 +115,5 @@ class Practica2Screen(Screen):
         self.tiempo_filtrado = ""
         self.eficiencia_remocion = ""
         self.mensaje_error = ""
+    def mostrar_animacion(self):
+        subprocess.Popen(["python", "animacion_practica2_pygame.py"])

@@ -7,6 +7,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 import matplotlib.pyplot as plt
 from kivy_garden.matplotlib import FigureCanvasKivyAgg
+import subprocess
 
 class Practica3Screen(Screen):
     temperatura_inicial = StringProperty("")
@@ -37,9 +38,6 @@ class Practica3Screen(Screen):
             if tcaliente < 0 or caudal_caliente <= 0 or tfrio < 0 or caudal_frio <= 0 or tiempo <= 0:
                 self.mostrar_error("Todos los valores deben ser mayores a cero (excepto temperaturas, que pueden ser >= 0).")
                 return
-            if tfrio >= tcaliente:
-                self.mostrar_error("La temperatura de entrada fría debe ser menor que la caliente.")
-                return
             # Calcular masa de agua calentada (kg)
             masa_agua = caudal_frio * tiempo  # L/min * min = L ≈ kg (fluido frío)
             # Potencia solar estimada: Q = m*c*ΔT/t, c=4186 J/kgK, ΔT = tcaliente-tfrio, t=tiempo*60s
@@ -58,10 +56,6 @@ class Practica3Screen(Screen):
             )
             if resultado.get("status") == "ok":
                 datos = resultado.get("data", {})
-                # Validación: la temperatura final no puede ser mayor que la caliente
-                if datos.get('temperatura_final', 0) > tcaliente:
-                    self.mostrar_error("La temperatura de salida final no puede ser mayor que la de entrada caliente.")
-                    return
                 self.temperatura_inicial = f"{datos.get('temperatura_inicial', 0):.1f} °C"
                 self.temperatura_final = f"{datos.get('temperatura_final', 0):.1f} °C"
                 self.tiempo_exposicion = f"{datos.get('tiempo_exposicion', 0):.1f} min"
@@ -132,3 +126,5 @@ class Practica3Screen(Screen):
         self.tiempo_exposicion = ""
         self.eficiencia_termica = ""
         self.mensaje_error = ""
+    def mostrar_animacion(self):
+        subprocess.Popen(["python", "animacion_practica3_pygame.py"])

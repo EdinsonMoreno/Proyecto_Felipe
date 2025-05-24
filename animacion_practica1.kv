@@ -1,0 +1,37 @@
+#:kivy 2.3.0
+
+<AnimacionEnergiaWidget@Widget>:
+    canvas:
+        Color:
+            rgba: 1, 1, 1, 0  # Fondo transparente
+        # Sol con halo
+        Color:
+            rgba: 1, 1, 0.4, 0.2
+        Ellipse:
+            pos: self.width * 0.1 - 30, self.height * 0.5 - 30
+            size: 120, 120
+        Color:
+            rgba: 1, 1, 0, 1
+        Ellipse:
+            pos: self.width * 0.1, self.height * 0.5
+            size: 60, 60
+
+        # Panel solar
+        Color:
+            rgba: 0.1, 0.3, 0.9, 1
+        Rectangle:
+            pos: self.width * 0.45, self.height * 0.4
+            size: 120, 60
+
+        # Batería
+        Color:
+            rgba: 0, 0.8, 0.4, 1
+        Rectangle:
+            pos: self.width * 0.75, self.height * 0.4
+            size: 30, root.carga_bateria
+
+        Color:
+            rgba: 0.2, 0.2, 0.2, 1
+        Line:
+            rectangle: (self.width * 0.75, self.height * 0.4, 30, 80)
+            width: 1.5
