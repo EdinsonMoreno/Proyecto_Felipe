@@ -12,31 +12,33 @@
 
     BoxLayout:
         orientation: 'vertical'
-        padding: [40, 30, 40, 30]
-        spacing: 20
+        padding: [min(self.width*0.08, 80), min(self.height*0.06, 50), min(self.width*0.08, 80), min(self.height*0.06, 50)]
+        spacing: min(self.height*0.04, 30)
 
         Label:
             text: "Práctica 1 – Balance energético del sistema fotovoltaico"
-            font_size: '22sp'
+            font_size: str(max(self.width, self.height) * 0.025) + 'sp'
             color: (34/255, 34/255, 34/255, 1)
             bold: True
             size_hint_y: None
-            height: self.texture_size[1] + 20
+            height: self.texture_size[1] + min(self.height*0.03, 20)
 
         BoxLayout:
             orientation: 'horizontal'
-            spacing: 40
+            spacing: min(self.width*0.04, 40)
 
             # Inputs a la izquierda (no se usan en backend actual, pero se pueden dejar para futuro)
             BoxLayout:
                 orientation: 'vertical'
-                spacing: 14
+                spacing: min(self.height*0.018, 14)
                 size_hint_x: 0.5
 
                 Label:
                     text: "Radiación solar (W/m²)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
+                    size_hint_y: None
+                    height: 28
                 TextInput:
                     id: input_radiacion
                     hint_text: "Ej: 800"
@@ -44,11 +46,15 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
+                    size_hint_y: None
+                    height: 32
 
                 Label:
                     text: "Área del panel (m²)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
+                    size_hint_y: None
+                    height: 28
                 TextInput:
                     id: input_area
                     hint_text: "Ej: 1.5"
@@ -56,11 +62,15 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
+                    size_hint_y: None
+                    height: 32
 
                 Label:
                     text: "Eficiencia del panel (%)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
+                    size_hint_y: None
+                    height: 28
                 TextInput:
                     id: input_eficiencia
                     hint_text: "Ej: 18"
@@ -68,11 +78,15 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
+                    size_hint_y: None
+                    height: 32
 
                 Label:
                     text: "Consumo de carga (Wh/día)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
+                    size_hint_y: None
+                    height: 28
                 TextInput:
                     id: input_consumo
                     hint_text: "Ej: 1200"
@@ -80,11 +94,15 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
+                    size_hint_y: None
+                    height: 32
 
                 Label:
                     text: "Pérdidas estimadas (%)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
+                    size_hint_y: None
+                    height: 28
                 TextInput:
                     id: input_perdidas
                     hint_text: "Ej: 15"
@@ -92,6 +110,8 @@
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
                     multiline: False
+                    size_hint_y: None
+                    height: 32
 
             # Resultados a la derecha
             BoxLayout:
