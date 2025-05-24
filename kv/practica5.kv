@@ -1,1 +1,108 @@
+#:kivy 2.1.0
 # Layout práctica 5
+
+<Practica5Screen>:
+    name: "practica5"
+    canvas.before:
+        Color:
+            rgba: (240/255, 240/255, 240/255, 1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: [40, 30, 40, 30]
+        spacing: 20
+
+        Label:
+            text: "Práctica 5 – Captación de agua lluvia"
+            font_size: '22sp'
+            color: (34/255, 34/255, 34/255, 1)
+            bold: True
+            size_hint_y: None
+            height: self.texture_size[1] + 20
+
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 40
+
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: 14
+                size_hint_x: 0.5
+                # ...inputs opcionales...
+
+            BoxLayout:
+                orientation: 'vertical'
+                spacing: 18
+                size_hint_x: 0.5
+                padding: [20, 10, 20, 10]
+                canvas.before:
+                    Color:
+                        rgba: (72/255, 219/255, 251/255, 0.12)
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [12]
+
+                Label:
+                    text: "Resultados"
+                    font_size: '18sp'
+                    color: (46/255, 134/255, 222/255, 1)
+                    bold: True
+
+                Label:
+                    text: "Volumen captado: [b]{}[/b]".format(root.volumen_captado)
+                    markup: True
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+
+                Label:
+                    text: "Nivel sensor: [b]{}[/b]".format(root.nivel_sensor)
+                    markup: True
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+
+                Label:
+                    text: "Volumen estimado: [b]{}[/b]".format(root.volumen_estimado)
+                    markup: True
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+
+                Label:
+                    text: "Precisión: [b]{}[/b]".format(root.precision)
+                    markup: True
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+
+                Label:
+                    text: "Tiempo de captación: [b]{}[/b]".format(root.tiempo_captacion)
+                    markup: True
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+
+                Label:
+                    text: root.mensaje_error
+                    color: (1, 0, 0, 1)
+                    font_size: '15sp'
+
+        Button:
+            text: "Simular"
+            size_hint: (0.3, None)
+            height: 48
+            pos_hint: {'center_x': 0.5}
+            background_color: (16/255, 172/255, 132/255, 1)
+            color: (1,1,1,1)
+            font_size: '18sp'
+            on_release: root.simular_captacion()
+
+        Button:
+            text: "Volver"
+            size_hint: (0.2, None)
+            height: 42
+            pos_hint: {'center_x': 0.5}
+            background_color: (46/255, 134/255, 222/255, 1)
+            color: (1,1,1,1)
+            font_size: '16sp'
+            on_release: app.root.current = "main"

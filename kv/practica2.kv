@@ -1,3 +1,4 @@
+#:kivy 2.1.0
 # Layout práctica 2
 
 <Practica2Screen>:
@@ -135,7 +136,7 @@
                     font_size: '16sp'
 
                 Label:
-                    text: "Eficiencia del sistema: [b]{}[/b]".format(root.eficiencia)
+                    text: "Eficiencia de remoción: [b]{}[/b]".format(root.eficiencia_remocion)
                     markup: True
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
@@ -144,14 +145,6 @@
                     text: root.mensaje_error
                     color: (1, 0, 0, 1)
                     font_size: '15sp'
-
-                # Imagen opcional del sistema de filtrado
-                Image:
-                    source: "assets/images/filtrado_esquema.png"
-                    allow_stretch: True
-                    keep_ratio: True
-                    size_hint_y: None
-                    height: 120
 
         # Botón de simulación
         Button:
