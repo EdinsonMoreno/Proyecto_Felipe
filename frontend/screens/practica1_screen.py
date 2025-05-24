@@ -76,17 +76,36 @@ class Practica1Screen(Screen):
             self.mensaje_error = "Datos inválidos"
 
     def graficar_resultados(self):
+        import matplotlib.pyplot as plt
+        from kivy_garden.matplotlib import FigureCanvasKivyAgg
+        plt.style.use("seaborn-v0_8-muted")
         valores = self.grafico_valores or [0]
         fig, axs = plt.subplots(2, 2, figsize=(10, 6))
-        axs[0, 0].bar(range(len(valores)), valores)
-        axs[0, 0].set_title('Barra')
-        axs[0, 1].plot(valores)
-        axs[0, 1].set_title('Línea')
-        axs[1, 0].scatter(range(len(valores)), valores)
-        axs[1, 0].set_title('Puntos')
+        # Barra
+        axs[0, 0].bar(range(len(valores)), valores, color="#2e86de")
+        axs[0, 0].set_title('Energía generada (Barra)')
+        axs[0, 0].set_xlabel('Simulación')
+        axs[0, 0].set_ylabel('Wh')
+        axs[0, 0].grid(True)
+        # Línea
+        axs[0, 1].plot(valores, color="#10ac84", marker='o', label="Energía generada")
+        axs[0, 1].set_title('Energía generada (Línea)')
+        axs[0, 1].set_xlabel('Simulación')
+        axs[0, 1].set_ylabel('Wh')
+        axs[0, 1].grid(True)
+        axs[0, 1].legend(loc='upper right')
+        # Puntos
+        axs[1, 0].scatter(range(len(valores)), valores, color="#ff9f43", label="Energía generada")
+        axs[1, 0].set_title('Energía generada (Puntos)')
+        axs[1, 0].set_xlabel('Simulación')
+        axs[1, 0].set_ylabel('Wh')
+        axs[1, 0].grid(True)
+        axs[1, 0].legend(loc='upper right')
+        # Circular
+        colores = ["#2e86de", "#10ac84", "#ff9f43", "#f6e58d"]
         axs[1, 1].pie([valores[-1], sum(valores[:-1]) or 1],
-                      labels=['Actual', 'Anteriores'], autopct='%1.1f%%')
-        axs[1, 1].set_title('Circular')
+                      labels=['Actual', 'Anteriores'], autopct='%1.1f%%', colors=colores[:2])
+        axs[1, 1].set_title('Distribución actual vs anteriores')
         fig.tight_layout()
         popup = Popup(title="Gráficas de resultados",
                       content=FigureCanvasKivyAgg(fig),

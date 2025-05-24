@@ -172,17 +172,25 @@
                 text: "Simular"
                 size_hint: None, None
                 size: dp(200), dp(60)
+                font_size: '18sp'
+                background_color: 0.18, 0.52, 0.87, 1  # Azul fuerte
+                color: 1,1,1,1
                 on_press: root.simular_intercambio()
             Button:
                 text: "Graficar"
                 size_hint: None, None
                 size: dp(200), dp(60)
+                font_size: '18sp'
+                background_color: 0.06, 0.67, 0.52, 1  # Verde institucional
+                color: 1,1,1,1
                 on_press: root.graficar_resultados()
             Button:
                 text: "Limpiar"
                 size_hint: None, None
                 size: dp(200), dp(60)
-                background_color: 0.3, 0.3, 0.3, 1
+                font_size: '18sp'
+                background_color: 0.93, 0.49, 0.14, 1  # Naranja
+                color: 1,1,1,1
                 on_press: root.limpiar_datos()
 
         # Botón volver
