@@ -2,17 +2,17 @@
 Backend para la simulación del proceso de filtrado multicapa del agua.
 Módulo funcional y modular para ser invocado desde la interfaz Kivy.
 Incluye manejo de errores y validación de datos para robustez y seguridad.
+Ahora es determinista: los resultados dependen solo de las entradas explícitas.
 """
 
-import random
 from typing import Dict, List
 
 # Variables internas de simulación
 _estado_filtrado = {
-    "turbidez_inicial": 0.0,  # NTU
-    "turbidez_final": 0.0,    # NTU
-    "volumen": 0.0,           # L
-    "tiempo": 0               # segundos
+    "turbidez_inicial": 120.0,  # NTU
+    "turbidez_final": 8.5,     # NTU
+    "volumen": 10.0,           # L
+    "tiempo": 95               # segundos
 }
 
 # Datos históricos simulados para graficar
@@ -21,26 +21,17 @@ _datos_grafico = {
     "tiempos": []
 }
 
-def iniciar_filtrado():
+def iniciar_filtrado(turbidez_inicial: float = 120.0, volumen: float = 10.0, tiempo: int = 95):
     """
     Inicializa variables de simulación para el proceso de filtrado multicapa.
-    Simula valores razonables de turbidez inicial, volumen y tiempo de proceso.
-    Incluye validación de rangos físicos y manejo de errores.
+    Ahora determinista: solo usa los valores de entrada o los valores por defecto.
     """
     try:
-        turbidez_ini = random.uniform(80, 200)  # NTU
-        volumen = random.uniform(8, 15)         # L
-        tiempo = random.randint(60, 150)        # s
-        if not (0 < turbidez_ini <= 1000 and 0 < volumen <= 100 and 0 < tiempo <= 3600):
-            return {"status": "error", "data": {}, "message": "Parámetros fuera de rango físico."}
-        _estado_filtrado["turbidez_inicial"] = turbidez_ini
+        _estado_filtrado["turbidez_inicial"] = turbidez_inicial
         _estado_filtrado["volumen"] = volumen
         _estado_filtrado["tiempo"] = tiempo
-        # Simulación de reducción de turbidez a través de las capas
-        turbidez = turbidez_ini
-        for capa in [0.5, 0.3, 0.2]:
-            turbidez = turbidez * (1 - capa)
-        _estado_filtrado["turbidez_final"] = max(turbidez, 1.0)
+        # Cálculo determinista de turbidez final (reducción fija)
+        _estado_filtrado["turbidez_final"] = max(turbidez_inicial * 0.07, 1.0)
         return {"status": "ok", "data": {}, "message": "Filtrado iniciado correctamente."}
     except Exception as e:
         return {"status": "error", "data": {}, "message": f"Error en iniciar_filtrado: {str(e)}"}
@@ -68,12 +59,11 @@ def obtener_datos() -> Dict[str, object]:
 def calcular_eficiencia() -> Dict[str, object]:
     """
     Calcula la eficiencia de remoción de sólidos en el filtrado multicapa.
-    Si falta algún dato, utiliza valores simulados razonables.
-    Retorna estructura controlada con manejo de errores.
+    Determinista: no usa aleatoriedad, solo entradas explícitas o constantes.
     """
     try:
-        tin = _estado_filtrado.get("turbidez_inicial", 100)
-        tf = _estado_filtrado.get("turbidez_final", 10)
+        tin = _estado_filtrado.get("turbidez_inicial", 120.0)
+        tf = _estado_filtrado.get("turbidez_final", 8.5)
         if tin == 0:
             return {"status": "error", "data": 0.0, "message": "Turbidez inicial igual a cero."}
         eficiencia = ((tin - tf) / tin) * 100 if tin > 0 else 0
@@ -84,20 +74,18 @@ def calcular_eficiencia() -> Dict[str, object]:
 
 def generar_datos_grafico(puntos: int = 5) -> Dict[str, object]:
     """
-    Genera listas simuladas de turbidez a lo largo de las etapas de filtrado para graficar.
-    Incluye manejo de errores y validación de datos.
+    Genera listas deterministas de turbidez a lo largo de las etapas de filtrado para graficar.
     """
     try:
-        turbidez = _estado_filtrado.get("turbidez_inicial", 100)
+        turbidez = _estado_filtrado.get("turbidez_inicial", 120.0)
         turbidez_list = [turbidez]
         tiempos = [0]
-        capas = [0.5, 0.3, 0.2, 0.1, 0.05][:puntos-1]
         if puntos <= 0:
             return {"status": "error", "data": {}, "message": "Parámetros de simulación inválidos."}
-        for i, capa in enumerate(capas):
-            turbidez = turbidez * (1 - capa)
+        for i in range(1, puntos):
+            turbidez = turbidez * 0.5 if i == 1 else turbidez * 0.4 if i == 2 else turbidez * 0.25
             turbidez_list.append(round(turbidez, 2))
-            tiempos.append((i+1) * (_estado_filtrado.get("tiempo", 100) // puntos))
+            tiempos.append(i * (_estado_filtrado.get("tiempo", 95) // puntos))
         _datos_grafico["turbidez"] = turbidez_list
         _datos_grafico["tiempos"] = tiempos
         return {"status": "ok", "data": {"turbidez": turbidez_list, "tiempos": tiempos}, "message": "Datos de gráfico generados correctamente."}

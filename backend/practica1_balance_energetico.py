@@ -2,17 +2,17 @@
 Backend para el análisis de balance energético del sistema fotovoltaico.
 Módulo completamente funcional y modular para ser invocado desde la interfaz Kivy.
 Incluye manejo de errores y validación de datos para robustez y seguridad.
+Ahora es determinista: los resultados dependen solo de las entradas explícitas.
 """
 
-import random
 from typing import Dict, List
 
 # Variables internas de simulación (pueden ser sobrescritas por la interfaz si se desea)
 _estado_simulacion = {
-    "radiacion": 0.0,  # W/m²
-    "tension": 0.0,    # V
-    "corriente": 0.0,  # A
-    "tiempo": 1.0      # h (puede ser modificado para simulaciones más largas)
+    "radiacion": 850.0,  # W/m² (valor fijo por defecto)
+    "tension": 14.0,    # V
+    "corriente": 8.0,   # A
+    "tiempo": 1.0       # h
 }
 
 # Datos históricos simulados para graficar
@@ -21,19 +21,12 @@ _datos_grafico = {
     "energia_consumida": []
 }
 
-def iniciar_medicion():
+def iniciar_medicion(radiacion: float = 850.0, tension: float = 14.0, corriente: float = 8.0, tiempo: float = 1.0):
     """
     Inicializa variables de simulación para la medición del sistema fotovoltaico.
-    Simula valores razonables de radiación solar, tensión y corriente.
-    Incluye validación de rangos físicos y manejo de errores.
+    Ahora determinista: solo usa los valores de entrada o los valores por defecto.
     """
     try:
-        radiacion = random.uniform(600, 1000)  # W/m²
-        tension = random.uniform(12, 15)       # V
-        corriente = random.uniform(5, 10)      # A
-        tiempo = 1.0                           # h
-        if not (0 < radiacion <= 1500 and 0 < tension <= 100 and 0 < corriente <= 100 and 0 < tiempo <= 24):
-            return {"status": "error", "data": {}, "message": "Parámetros fuera de rango físico."}
         _estado_simulacion["radiacion"] = radiacion
         _estado_simulacion["tension"] = tension
         _estado_simulacion["corriente"] = corriente
@@ -64,22 +57,16 @@ def obtener_datos() -> Dict[str, object]:
 def calcular_resultados() -> Dict[str, object]:
     """
     Calcula la energía generada, consumida y la eficiencia del sistema.
-    Si falta algún dato, utiliza valores simulados razonables.
-    Incluye manejo de errores y validación de datos.
+    Determinista: no usa aleatoriedad, solo entradas explícitas o constantes.
     """
     try:
-        V = _estado_simulacion.get("tension", 12)
-        I = _estado_simulacion.get("corriente", 7)
+        V = _estado_simulacion.get("tension", 14.0)
+        I = _estado_simulacion.get("corriente", 8.0)
         t = _estado_simulacion.get("tiempo", 1.0)
-        try:
-            energia_generada = V * I * t
-        except Exception:
-            energia_generada = 0.0
-        energia_consumida = energia_generada * random.uniform(0.6, 0.85)
-        try:
-            eficiencia = (energia_consumida / energia_generada) * 100 if energia_generada > 0 else 0
-        except ZeroDivisionError:
-            eficiencia = 0.0
+        energia_generada = V * I * t
+        # Consumo fijo: 75% de la energía generada
+        energia_consumida = energia_generada * 0.75
+        eficiencia = (energia_consumida / energia_generada) * 100 if energia_generada > 0 else 0
         resultados = {
             "energia_generada": energia_generada,
             "energia_consumida": energia_consumida,
@@ -93,20 +80,18 @@ def calcular_resultados() -> Dict[str, object]:
 
 def generar_datos_grafico(puntos: int = 24) -> Dict[str, object]:
     """
-    Genera listas simuladas de energía generada y consumida a lo largo del tiempo para graficar.
-    Incluye manejo de errores y validación de datos.
+    Genera listas deterministas de energía generada y consumida a lo largo del tiempo para graficar.
     """
     try:
         if puntos <= 0:
             return {"status": "error", "data": {}, "message": "Parámetros de simulación inválidos."}
         energia_gen = []
         energia_con = []
-        for _ in range(puntos):
-            V = random.uniform(12, 15)
-            I = random.uniform(5, 10)
-            t = 1.0
-            eg = V * I * t
-            ec = eg * random.uniform(0.6, 0.85)
+        V = _estado_simulacion.get("tension", 14.0)
+        I = _estado_simulacion.get("corriente", 8.0)
+        for i in range(puntos):
+            eg = V * I * 1.0  # 1h por punto
+            ec = eg * 0.75
             energia_gen.append(round(eg, 2))
             energia_con.append(round(ec, 2))
         _datos_grafico["energia_generada"] = energia_gen
