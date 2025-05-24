@@ -35,10 +35,14 @@ class Practica2Screen(Screen):
             if turbidez < 0 or volumen <= 0 or tiempo <= 0:
                 self.mostrar_error("La turbidez debe ser >= 0 y el volumen y tiempo > 0.")
                 return
+            # Enviar el estado de las capas activas al backend
             resultado = filtrado.calcular_resultados(
                 turbidez_inicial=turbidez,
                 volumen=volumen,
-                tiempo=tiempo
+                tiempo=tiempo,
+                grava_activa=self.grava_activa,
+                arena_activa=self.arena_activa,
+                carbon_activo=self.carbon_activo
             )
             if resultado.get("status") == "ok":
                 datos = resultado.get("data", {})
