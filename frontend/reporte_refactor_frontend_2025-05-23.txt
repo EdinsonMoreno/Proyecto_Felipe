@@ -1,0 +1,42 @@
+REPORTE DE REFACTORIZACIÓN Y MEJORAS FRONTEND - KIVY
+Fecha: 23/05/2025
+
+Resumen de cambios aplicados:
+---------------------------
+
+1. Validación de entradas en todas las pantallas de prácticas:
+   - Se agregó validación estricta de datos numéricos en los campos de entrada (TextInput) de cada práctica.
+   - Si el usuario ingresa un valor no numérico o fuera de rango, se muestra un mensaje de error y no se ejecuta la simulación.
+
+2. Manejo estructurado de errores del backend:
+   - Todas las llamadas a funciones del backend ahora verifican el campo 'status' en la respuesta.
+   - Si ocurre un error, se muestra el mensaje correspondiente al usuario mediante un Popup y se limpian los resultados.
+
+3. Función mostrar_error unificada:
+   - Se implementó la función mostrar_error en cada pantalla, utilizando Popup para mostrar mensajes de error de forma clara y consistente.
+   - Esto mejora la experiencia de usuario y la robustez ante fallos.
+
+4. Seguridad y buenas prácticas:
+   - Se eliminó cualquier posibilidad de ejecución de código arbitrario (no se usa eval, exec ni manipulación insegura de datos).
+   - Los botones de simulación solo procesan si los datos son válidos.
+   - No se exponen errores internos del sistema en consola ni en la interfaz.
+
+5. Consistencia visual y de interacción:
+   - Se mantuvo la estructura visual y de interacción en todas las pantallas, usando los mismos componentes para inputs, resultados y errores.
+   - Se garantiza una experiencia homogénea y profesional en toda la aplicación.
+
+6. Optimización de la interfaz:
+   - Se evita la creación innecesaria de widgets y se asegura la fluidez de la UI.
+   - Se preparó la estructura para reutilizar layouts y componentes comunes en el futuro.
+
+Archivos modificados:
+---------------------
+- frontend/screens/practica1_screen.py
+- frontend/screens/practica2_screen.py
+- frontend/screens/practica3_screen.py
+- frontend/screens/practica4_screen.py
+- frontend/screens/practica5_screen.py
+
+Todos los cambios cumplen con las restricciones de seguridad, compatibilidad y estilo institucional.
+
+Fin del reporte.

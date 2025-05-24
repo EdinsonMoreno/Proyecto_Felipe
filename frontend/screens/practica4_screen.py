@@ -1,6 +1,8 @@
 from kivy.uix.screenmanager import Screen
 from kivy.properties import StringProperty, NumericProperty
 from backend import practica4_caldera as caldera
+from kivy.uix.popup import Popup
+from kivy.uix.label import Label
 
 class Practica4Screen(Screen):
     temperatura_maxima = StringProperty("")
@@ -11,6 +13,13 @@ class Practica4Screen(Screen):
     mensaje_error = StringProperty("")
     barra_temp = NumericProperty(0)
 
+    def mostrar_error(self, mensaje):
+        self.mensaje_error = mensaje
+        popup = Popup(title='Error',
+                      content=Label(text=mensaje),
+                      size_hint=(None, None), size=(400, 200))
+        popup.open()
+
     def simular_caldera(self, modo="resistencia"):
         try:
             # Leer inputs del usuario
@@ -18,20 +27,23 @@ class Practica4Screen(Screen):
             potencia = self.ids.input_potencia.text
             tiempo = self.ids.input_tiempo.text
             # Validar y convertir
-            volumen = float(volumen) if volumen else 0
-            potencia = float(potencia) if potencia else 0
-            tiempo = float(tiempo) if tiempo else 0
+            try:
+                volumen = float(volumen)
+                potencia = float(potencia)
+                tiempo = float(tiempo)
+            except ValueError:
+                self.mostrar_error("Todos los valores deben ser numéricos y válidos.")
+                return
+            if volumen <= 0 or potencia <= 0 or tiempo <= 0:
+                self.mostrar_error("Todos los valores deben ser mayores a cero.")
+                return
             # Llamar backend con parámetros (ajustar backend si es necesario)
             caldera.iniciar_caldera(modo)
             # Sobrescribir valores simulados con los del usuario si son válidos
-            if volumen > 0:
-                caldera._estado_caldera["volumen_agua"] = volumen / 1000  # ml a L
-                caldera._estado_caldera["masa_agua"] = volumen / 1000
-            if potencia > 0:
-                caldera._estado_caldera["energia_entrada"] = potencia
-            if tiempo > 0:
-                # No se usa directamente, pero podría influir en la eficiencia
-                pass
+            caldera._estado_caldera["volumen_agua"] = volumen / 1000  # ml a L
+            caldera._estado_caldera["masa_agua"] = volumen / 1000
+            caldera._estado_caldera["energia_entrada"] = potencia
+            # El tiempo puede influir en eficiencia, pero aquí solo se valida
             caldera.calcular_resultados()
             resultado = caldera.obtener_datos()
             if resultado.get("status") == "ok":
@@ -55,7 +67,7 @@ class Practica4Screen(Screen):
                 self.vapor_generado = ""
                 self.eficiencia = ""
                 self.barra_temp = 0
-                self.mensaje_error = resultado.get("message", "Error en la simulación")
+                self.mostrar_error(resultado.get("message", "Error en la simulación"))
         except Exception:
             self.temperatura_maxima = ""
             self.tiempo_ebullicion = ""
@@ -63,4 +75,4 @@ class Practica4Screen(Screen):
             self.vapor_generado = ""
             self.eficiencia = ""
             self.barra_temp = 0
-            self.mensaje_error = "Datos inválidos"
+            self.mostrar_error("Datos inválidos")

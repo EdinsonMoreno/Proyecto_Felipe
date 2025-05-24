@@ -1,6 +1,8 @@
 from kivy.uix.screenmanager import Screen
 from kivy.properties import StringProperty
 from backend import practica5_captacion_lluvia as captacion
+from kivy.uix.popup import Popup
+from kivy.uix.label import Label
 
 class Practica5Screen(Screen):
     volumen_captado = StringProperty("")
@@ -10,8 +12,17 @@ class Practica5Screen(Screen):
     tiempo_captacion = StringProperty("")
     mensaje_error = StringProperty("")
 
+    def mostrar_error(self, mensaje):
+        self.mensaje_error = mensaje
+        popup = Popup(title='Error',
+                      content=Label(text=mensaje),
+                      size_hint=(None, None), size=(400, 200))
+        popup.open()
+
     def simular_captacion(self):
         try:
+            # Validar inputs si existen (ejemplo: volumen esperado, altura, etc.)
+            # Si no hay inputs, omitir validación
             captacion.iniciar_captacion()
             resultado = captacion.obtener_datos()
             if resultado.get("status") == "ok":
@@ -28,11 +39,11 @@ class Practica5Screen(Screen):
                 self.volumen_estimado = ""
                 self.precision = ""
                 self.tiempo_captacion = ""
-                self.mensaje_error = resultado.get("message", "Error en la simulación")
+                self.mostrar_error(resultado.get("message", "Error en la simulación"))
         except Exception:
             self.volumen_captado = ""
             self.nivel_sensor = ""
             self.volumen_estimado = ""
             self.precision = ""
             self.tiempo_captacion = ""
-            self.mensaje_error = "Datos inválidos"
+            self.mostrar_error("Datos inválidos")

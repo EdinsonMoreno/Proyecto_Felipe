@@ -16,7 +16,7 @@
         spacing: 20
 
         Label:
-            text: "Práctica 5 – Captación de agua lluvia"
+            text: "Práctica 5 – Simulación de captación de agua lluvia"
             font_size: '22sp'
             color: (34/255, 34/255, 34/255, 1)
             bold: True
@@ -27,12 +27,49 @@
             orientation: 'horizontal'
             spacing: 40
 
+            # Inputs a la izquierda
             BoxLayout:
                 orientation: 'vertical'
                 spacing: 14
                 size_hint_x: 0.5
-                # ...inputs opcionales...
 
+                Label:
+                    text: "Intensidad de la lluvia (mm/h)"
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+                TextInput:
+                    id: input_intensidad
+                    hint_text: "Ej: 20"
+                    input_filter: 'float'
+                    background_color: (1,1,1,1)
+                    foreground_color: (34/255, 34/255, 34/255, 1)
+                    multiline: False
+
+                Label:
+                    text: "Área del techo (m²)"
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+                TextInput:
+                    id: input_area
+                    hint_text: "Ej: 50"
+                    input_filter: 'float'
+                    background_color: (1,1,1,1)
+                    foreground_color: (34/255, 34/255, 34/255, 1)
+                    multiline: False
+
+                Label:
+                    text: "Tiempo de captación (min)"
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+                TextInput:
+                    id: input_tiempo
+                    hint_text: "Ej: 30"
+                    input_filter: 'float'
+                    background_color: (1,1,1,1)
+                    foreground_color: (34/255, 34/255, 34/255, 1)
+                    multiline: False
+
+            # Resultados y visualización a la derecha
             BoxLayout:
                 orientation: 'vertical'
                 spacing: 18
@@ -59,19 +96,19 @@
                     font_size: '16sp'
 
                 Label:
-                    text: "Nivel sensor: [b]{}[/b]".format(root.nivel_sensor)
+                    text: "Nivel en el tanque: [b]{}[/b]".format(root.nivel_sensor)
                     markup: True
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
 
                 Label:
-                    text: "Volumen estimado: [b]{}[/b]".format(root.volumen_estimado)
+                    text: "Volumen estimado por sensor: [b]{}[/b]".format(root.volumen_estimado)
                     markup: True
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
 
                 Label:
-                    text: "Precisión: [b]{}[/b]".format(root.precision)
+                    text: "Precisión del sensor: [b]{}[/b]".format(root.precision)
                     markup: True
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
@@ -81,6 +118,28 @@
                     markup: True
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
+
+                # Visualización gráfica del tanque (barra de nivel)
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_y: None
+                    height: 32
+                    spacing: 8
+                    Label:
+                        text: "Tanque"
+                        color: (46/255, 134/255, 222/255, 1)
+                        font_size: '14sp'
+                        size_hint_x: 0.2
+                    ProgressBar:
+                        max: 100
+                        value: float(root.nivel_sensor.split()[0]) if root.nivel_sensor else 0
+                        size_hint_x: 0.7
+                        height: 22
+                    Label:
+                        text: "100 cm"
+                        color: (46/255, 134/255, 222/255, 1)
+                        font_size: '14sp'
+                        size_hint_x: 0.2
 
                 Label:
                     text: root.mensaje_error
