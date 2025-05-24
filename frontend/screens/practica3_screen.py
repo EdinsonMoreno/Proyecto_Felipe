@@ -1,10 +1,12 @@
 # Pantalla práctica 3
 
 from kivy.uix.screenmanager import Screen
-from kivy.properties import StringProperty
+from kivy.properties import StringProperty, ListProperty
 from backend import practica3_intercambiador_calor as intercambiador
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
+import matplotlib.pyplot as plt
+from kivy_garden.matplotlib import FigureCanvasKivyAgg
 
 class Practica3Screen(Screen):
     temperatura_inicial = StringProperty("")
@@ -12,6 +14,7 @@ class Practica3Screen(Screen):
     tiempo_exposicion = StringProperty("")
     eficiencia_termica = StringProperty("")
     mensaje_error = StringProperty("")
+    grafico_valores = ListProperty([])
 
     def mostrar_error(self, mensaje):
         self.mensaje_error = mensaje
@@ -57,6 +60,11 @@ class Practica3Screen(Screen):
                 self.tiempo_exposicion = f"{datos.get('tiempo_exposicion', 0):.1f} min"
                 self.eficiencia_termica = f"{datos.get('eficiencia_termica', 0):.1f} %"
                 self.mensaje_error = ""
+                # Guardar valor para graficar (temperatura final)
+                valor_actual = datos.get('temperatura_final', 0)
+                self.grafico_valores.append(valor_actual)
+                if len(self.grafico_valores) > 4:
+                    self.grafico_valores.pop(0)
             else:
                 self.temperatura_inicial = ""
                 self.temperatura_final = ""
@@ -69,3 +77,32 @@ class Practica3Screen(Screen):
             self.tiempo_exposicion = ""
             self.eficiencia_termica = ""
             self.mostrar_error("Datos inválidos")
+    def graficar_resultados(self):
+        valores = self.grafico_valores or [0]
+        fig, axs = plt.subplots(2, 2, figsize=(10, 6))
+        axs[0, 0].bar(range(len(valores)), valores)
+        axs[0, 0].set_title('Barra')
+        axs[0, 1].plot(valores)
+        axs[0, 1].set_title('Línea')
+        axs[1, 0].scatter(range(len(valores)), valores)
+        axs[1, 0].set_title('Puntos')
+        axs[1, 1].pie([valores[-1], sum(valores[:-1]) or 1],
+                      labels=['Actual', 'Anteriores'], autopct='%1.1f%%')
+        axs[1, 1].set_title('Circular')
+        fig.tight_layout()
+        popup = Popup(title="Gráficas de resultados",
+                      content=FigureCanvasKivyAgg(fig),
+                      size_hint=(None, None), size=(900, 600))
+        popup.open()
+    def limpiar_datos(self):
+        self.grafico_valores = []
+        self.ids.input_tcaliente.text = ""
+        self.ids.input_caudal_caliente.text = ""
+        self.ids.input_tfrio.text = ""
+        self.ids.input_caudal_frio.text = ""
+        self.ids.input_tiempo.text = ""
+        self.temperatura_inicial = ""
+        self.temperatura_final = ""
+        self.tiempo_exposicion = ""
+        self.eficiencia_termica = ""
+        self.mensaje_error = ""

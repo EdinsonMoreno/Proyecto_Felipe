@@ -156,16 +156,28 @@
                     color: (1, 0, 0, 1)
                     font_size: '15sp'
 
-        # Botón de simulación
-        Button:
-            text: "Simular"
-            size_hint: (0.3, None)
-            height: 48
-            pos_hint: {'center_x': 0.5}
-            background_color: (16/255, 172/255, 132/255, 1)
-            color: (1,1,1,1)
-            font_size: '18sp'
-            on_release: root.simular_balance()
+        # Botones de acción
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 18
+            size_hint_y: None
+            height: 60
+            Button:
+                text: "Simular"
+                size_hint: None, None
+                size: dp(200), dp(60)
+                on_press: root.simular_balance()
+            Button:
+                text: "Graficar"
+                size_hint: None, None
+                size: dp(200), dp(60)
+                on_press: root.graficar_resultados()
+            Button:
+                text: "Limpiar"
+                size_hint: None, None
+                size: dp(200), dp(60)
+                background_color: 0.3, 0.3, 0.3, 1
+                on_press: root.limpiar_datos()
 
         # Botón volver
         Button:
