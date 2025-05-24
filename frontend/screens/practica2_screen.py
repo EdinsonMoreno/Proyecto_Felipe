@@ -7,6 +7,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 import matplotlib.pyplot as plt
 from kivy_garden.matplotlib import FigureCanvasKivyAgg
+import subprocess
 
 class Practica2Screen(Screen):
     turbidez_final = StringProperty("")
@@ -115,102 +116,4 @@ class Practica2Screen(Screen):
         self.eficiencia_remocion = ""
         self.mensaje_error = ""
     def mostrar_animacion(self):
-        from kivy.uix.widget import Widget
-        from kivy.uix.popup import Popup
-        from kivy.uix.button import Button
-        from kivy.graphics import Ellipse, Color, Rectangle, Line
-        from kivy.clock import Clock
-        import math
-        class FiltradoRealista(Widget):
-            def __init__(self, **kwargs):
-                super().__init__(**kwargs)
-                self.size = (800, 500)
-                with self.canvas.before:
-                    Color(1, 1, 1, 1)
-                    Rectangle(pos=self.pos, size=self.size)
-                # Capas de filtro
-                self.capas = [
-                    {'color': (0.6,0.6,0.6,1), 'y': 340, 'label': 'Grava'},
-                    {'color': (0.95,0.85,0.5,1), 'y': 260, 'label': 'Arena'},
-                    {'color': (0.18,0.18,0.18,1), 'y': 180, 'label': 'Carbón'}
-                ]
-                self.gota_y = 400
-                self.gota_color = [0.2, 0.6, 0.9, 1]
-                self.gota_brillo = 1.0
-                self.t = 0
-                self.etapa = 0
-                with self.canvas:
-                    # Filtros con textura
-                    self.rect_capas = []
-                    for capa in self.capas:
-                        Color(*capa['color'])
-                        self.rect_capas.append(Rectangle(pos=(320, capa['y']), size=(160, 60)))
-                        # Textura: líneas
-                        for i in range(8):
-                            Color(0.8,0.8,0.8,0.15)
-                            Line(points=[330+i*18, capa['y'], 330+i*18, capa['y']+60], width=1)
-                    # Recipiente final
-                    Color(0.7, 0.9, 1, 0.4)
-                    self.rec_final = Rectangle(pos=(340, 120), size=(120, 40))
-                    # Gota
-                    self.gota_color_instr = Color(*self.gota_color)
-                    self.gota = Ellipse(pos=(380, self.gota_y), size=(40, 56))
-                    # Brillo de la gota
-                    self.gota_brillo_color_instr = Color(1,1,1,0.25)
-                    self.gota_brillo_ellipse = Ellipse(pos=(395, self.gota_y+30), size=(15, 18))
-                self._event = Clock.schedule_interval(self.animar, 1/60)
-            def animar(self, dt):
-                # Gota baja y cambia de color según capa
-                if self.etapa < 3:
-                    if self.gota_y > self.capas[self.etapa]['y']+10:
-                        self.gota_y -= 2.5
-                        self.gota.pos = (380, self.gota_y)
-                        self.gota_brillo_ellipse.pos = (395, self.gota_y+30)
-                    else:
-                        # Cambia color y brillo
-                        if self.etapa == 0:
-                            self.gota_color = [0.3, 0.5, 0.8, 1]
-                        elif self.etapa == 1:
-                            self.gota_color = [0.7, 0.8, 0.9, 1]
-                        elif self.etapa == 2:
-                            self.gota_color = [0.8, 1, 1, 1]
-                        self.gota_brillo = 0.5 + 0.2*self.etapa
-                        self.etapa += 1
-                else:
-                    # Gota llega al recipiente y se vuelve translúcida
-                    if self.gota_y > 140:
-                        self.gota_y -= 2.5
-                        self.gota.pos = (380, self.gota_y)
-                        self.gota_brillo_ellipse.pos = (395, self.gota_y+30)
-                        self.gota_color = [0.8, 1, 1, 0.7]
-                    else:
-                        # Rebote y reinicio
-                        self.gota_y = 400
-                        self.etapa = 0
-                        self.gota_color = [0.2, 0.6, 0.9, 1]
-                # Actualizar color y brillo
-                self.gota_color_instr.rgba = self.gota_color
-                self.gota_brillo_color_instr.a = self.gota_brillo
-                self.t += dt
-                if self.t > 12:
-                    if self._event:
-                        self._event.cancel()
-            def stop(self):
-                if hasattr(self, '_event') and self._event:
-                    self._event.cancel()
-        content = FiltradoRealista()
-        popup = Popup(
-            title="Animación – Filtrado Multicapa (Práctica 2)",
-            content=content,
-            background="atlas://data/images/defaulttheme/button",
-            size_hint=(None, None), size=(800, 500),
-            separator_color=(0, 0, 0, 1),
-            title_color=(0, 0, 0, 1)
-        )
-        btn_cerrar = Button(text="Cerrar", size_hint=(None, None), size=(100, 40), pos_hint={"right": 1, "top": 1}, background_color=(0.93, 0.49, 0.14, 1), color=(0,0,0,1), font_size=16)
-        def cerrar_popup(*a):
-            content.stop()
-            popup.dismiss()
-        btn_cerrar.bind(on_release=cerrar_popup)
-        popup._container.add_widget(btn_cerrar)
-        popup.open()
+        subprocess.Popen(["python", "animacion_practica2_pygame.py"])

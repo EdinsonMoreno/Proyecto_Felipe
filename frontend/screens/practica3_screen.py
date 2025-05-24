@@ -7,6 +7,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 import matplotlib.pyplot as plt
 from kivy_garden.matplotlib import FigureCanvasKivyAgg
+import subprocess
 
 class Practica3Screen(Screen):
     temperatura_inicial = StringProperty("")
@@ -126,86 +127,4 @@ class Practica3Screen(Screen):
         self.eficiencia_termica = ""
         self.mensaje_error = ""
     def mostrar_animacion(self):
-        from kivy.uix.widget import Widget
-        from kivy.uix.popup import Popup
-        from kivy.uix.button import Button
-        from kivy.graphics import Line, Color, Rectangle, Ellipse
-        from kivy.clock import Clock
-        import math
-        class IntercambiadorRealista(Widget):
-            def __init__(self, **kwargs):
-                super().__init__(**kwargs)
-                self.size = (800, 500)
-                with self.canvas.before:
-                    Color(1, 1, 1, 1)
-                    Rectangle(pos=self.pos, size=self.size)
-                # Tubos y válvulas
-                self.t = 0
-                with self.canvas:
-                    # Tubo caliente (rojo, arriba, curvo)
-                    self.tubo_rojo_color = Color(0.9, 0.2, 0.2, 1)
-                    self.tubo_rojo = Line(bezier=[120, 370, 300, 400, 500, 320, 680, 370], width=28, cap='round')
-                    # Válvula roja
-                    self.valv_roja_color = Color(0.7, 0.1, 0.1, 1)
-                    self.valv_roja = Ellipse(pos=(110, 355), size=(30, 30))
-                    # Tubo frío (azul, abajo, curvo)
-                    self.tubo_azul_color = Color(0.2, 0.4, 0.9, 1)
-                    self.tubo_azul = Line(bezier=[680, 130, 500, 180, 300, 100, 120, 130], width=28, cap='round')
-                    # Válvula azul
-                    self.valv_azul_color = Color(0.1, 0.2, 0.7, 1)
-                    self.valv_azul = Ellipse(pos=(110, 115), size=(30, 30))
-                    # Zona de contacto (mezcla)
-                    self.mezcla_color = Color(1, 0.7, 0.2, 0.5)
-                    self.mezcla = Ellipse(pos=(370, 220), size=(60, 60))
-                    # Flujos animados (líneas con degradado)
-                    self.flujo_rojo = []
-                    self.flujo_rojo_colors = []
-                    self.flujo_azul = []
-                    self.flujo_azul_colors = []
-                    for i in range(7):
-                        fr_color = Color(1, 0.5+0.05*i, 0.5, 0.7)
-                        self.flujo_rojo_colors.append(fr_color)
-                        self.flujo_rojo.append(Line(points=[140+60*i, 370, 170+60*i, 320], width=4))
-                        fa_color = Color(0.5, 0.7+0.04*i, 1, 0.7)
-                        self.flujo_azul_colors.append(fa_color)
-                        self.flujo_azul.append(Line(points=[660-60*i, 130, 630-60*i, 180], width=4))
-                self._event = Clock.schedule_interval(self.animar, 1/60)
-            def animar(self, dt):
-                # Flujos animados
-                for i, linea in enumerate(self.flujo_rojo):
-                    dx = (self.t*60 + i*30) % 540
-                    linea.points = [140+dx, 370, 170+dx, 320]
-                for i, linea in enumerate(self.flujo_azul):
-                    dx = (self.t*60 + i*30) % 540
-                    linea.points = [660-dx, 130, 630-dx, 180]
-                # Mezcla oscila
-                self.mezcla.size = (60+10*math.sin(self.t*1.5), 60+10*math.cos(self.t*1.5))
-                # Animar colores (ejemplo: tubo rojo oscila entre 0.9 y 1.0 de rojo)
-                self.tubo_rojo_color.rgba = (0.9+0.1*math.sin(self.t*2), 0.2, 0.2, 1)
-                self.valv_roja_color.rgba = (0.7, 0.1+0.1*math.sin(self.t*2), 0.1, 1)
-                self.tubo_azul_color.rgba = (0.2, 0.4+0.1*math.sin(self.t*2), 0.9, 1)
-                self.valv_azul_color.rgba = (0.1, 0.2+0.1*math.sin(self.t*2), 0.7, 1)
-                self.mezcla_color.rgba = (1, 0.7+0.3*math.sin(self.t*2), 0.2, 0.5)
-                self.t += dt
-                if self.t > 10:
-                    if self._event:
-                        self._event.cancel()
-            def stop(self):
-                if hasattr(self, '_event') and self._event:
-                    self._event.cancel()
-        content = IntercambiadorRealista()
-        popup = Popup(
-            title="Animación – Intercambiador de Calor (Práctica 3)",
-            content=content,
-            background="atlas://data/images/defaulttheme/button",
-            size_hint=(None, None), size=(800, 500),
-            separator_color=(0, 0, 0, 1),
-            title_color=(0, 0, 0, 1)
-        )
-        btn_cerrar = Button(text="Cerrar", size_hint=(None, None), size=(100, 40), pos_hint={"right": 1, "top": 1}, background_color=(0.93, 0.49, 0.14, 1), color=(0,0,0,1), font_size=16)
-        def cerrar_popup(*a):
-            content.stop()
-            popup.dismiss()
-        btn_cerrar.bind(on_release=cerrar_popup)
-        popup._container.add_widget(btn_cerrar)
-        popup.open()
+        subprocess.Popen(["python", "animacion_practica3_pygame.py"])

@@ -5,6 +5,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 import matplotlib.pyplot as plt
 from kivy_garden.matplotlib import FigureCanvasKivyAgg
+import subprocess
 
 class Practica4Screen(Screen):
     temperatura_maxima = StringProperty("")
@@ -135,84 +136,4 @@ class Practica4Screen(Screen):
         self.barra_temp = 0
         self.mensaje_error = ""
     def mostrar_animacion(self):
-        from kivy.uix.widget import Widget
-        from kivy.uix.popup import Popup
-        from kivy.uix.button import Button
-        from kivy.graphics import Rectangle, Color, Line, Ellipse
-        from kivy.clock import Clock
-        class CalderaAnimada(Widget):
-            def __init__(self, **kwargs):
-                super().__init__(**kwargs)
-                self.size = (800, 500)
-                with self.canvas.before:
-                    Color(1, 1, 1, 1)
-                    Rectangle(pos=self.pos, size=self.size)
-                self.n_burbujas = 8
-                self.burbujas = []
-                self.vapor = []
-                self.t = 0
-                # Elementos
-                with self.canvas:
-                    # Tanque
-                    self.tanque_color = Color(0.2, 0.6, 0.8, 1)
-                    self.tanque = Rectangle(pos=(320, 140), size=(160, 120))
-                    # Agua (nivel sube y color cambia)
-                    self.agua_color = Color(0.1, 0.5, 1, 0.7)
-                    self.agua = Rectangle(pos=(320, 140), size=(160, 80))
-                    # Vapor (líneas curvas)
-                    self.vapor_colors = []
-                    self.vapor = []
-                    for i in range(3):
-                        v_color = Color(0.8, 0.8, 0.8, 0.7)
-                        self.vapor_colors.append(v_color)
-                        self.vapor.append(Line(points=[360+60*i, 260, 360+60*i, 380], width=2))
-                    # Burbujas
-                    self.burbujas_colors = []
-                    self.burbujas = []
-                    for i in range(self.n_burbujas):
-                        b_color = Color(1,1,1,0.7)
-                        self.burbujas_colors.append(b_color)
-                        self.burbujas.append(Ellipse(pos=(340+18*i, 150), size=(16,16)))
-                self._event = Clock.schedule_interval(self.animar, 1/60)
-            def animar(self, dt):
-                # Animar burbujas
-                for i, burbuja in enumerate(self.burbujas):
-                    x, y = burbuja.pos
-                    y += 1.5 + i*0.1
-                    if y > 220:
-                        y = 150
-                    burbuja.pos = (x, y)
-                # Animar vapor (ondulaciones)
-                for i, linea in enumerate(self.vapor):
-                    p = linea.points
-                    p[1] = 260 + 10 * (self.t + i)
-                    p[3] = 380 + 10 * (self.t + i)
-                    linea.points = p
-                # Subir nivel de agua y cambiar color
-                nivel = min(80 + self.t*3, 120)
-                self.agua.size = (160, nivel)
-                if nivel > 100:
-                    self.agua.rgb = (1, 0.7, 0.2)
-                self.t += dt
-                if self.t > 10:
-                    if self._event:
-                        self._event.cancel()
-            def stop(self):
-                if hasattr(self, '_event') and self._event:
-                    self._event.cancel()
-        content = CalderaAnimada()
-        popup = Popup(
-            title="Animación – Práctica 4",
-            content=content,
-            background="atlas://data/images/defaulttheme/button",
-            size_hint=(None, None), size=(800, 500),
-            separator_color=(0, 0, 0, 1),
-            title_color=(0, 0, 0, 1)
-        )
-        btn_cerrar = Button(text="Cerrar", size_hint=(None, None), size=(100, 40), pos_hint={"right": 1, "top": 1}, background_color=(0.93, 0.49, 0.14, 1), color=(0,0,0,1), font_size=16)
-        def cerrar_popup(*a):
-            content.stop()
-            popup.dismiss()
-        btn_cerrar.bind(on_release=cerrar_popup)
-        popup._container.add_widget(btn_cerrar)
-        popup.open()
+        subprocess.Popen(["python", "animacion_practica4_pygame.py"])
