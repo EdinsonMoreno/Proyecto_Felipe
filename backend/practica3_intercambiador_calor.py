@@ -43,12 +43,13 @@ def calcular_resultados(temperatura_inicial, masa_agua, potencia_solar, tiempo_e
         # Temperatura final del fluido frío
         delta_T = Q_real / (m_frio * c) if m_frio > 0 else 0.0
         temperatura_final = tfrio + delta_T
+        # Restricción: la temperatura final no puede ser mayor que la de entrada caliente
         if temperatura_final > tcaliente:
             temperatura_final = tcaliente
         if temperatura_final < tfrio:
             temperatura_final = tfrio
-        # Eficiencia térmica real
-        eficiencia = (Q_real / Q_max) * 100 if Q_max > 0 else 0.0
+        # Eficiencia térmica basada en temperaturas
+        eficiencia = ((temperatura_final - tfrio) / (tcaliente - tfrio)) * 100 if (tcaliente - tfrio) > 0 else 0.0
         variacion = (temperatura_final - tfrio) / tiempo_exposicion if tiempo_exposicion > 0 else 0.0
         datos = {
             "temperatura_inicial": round(tfrio, 1),
