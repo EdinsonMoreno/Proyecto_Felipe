@@ -1,8 +1,8 @@
 #:kivy 2.1.0
-# Layout práctica 3
+# Layout práctica 2
 
-<Practica3Screen>:
-    name: "practica3"
+<Practica2Screen>:
+    name: "practica2"
     canvas.before:
         Color:
             rgba: (240/255, 240/255, 240/255, 1)
@@ -16,7 +16,7 @@
         spacing: min(self.height*0.04, 30)
 
         Label:
-            text: "Práctica 3 – Intercambiador de calor"
+            text: "Práctica 3 – Simulación del sistema de filtrado multicapa"
             font_size: str(max(self.width, self.height) * 0.025) + 'sp'
             color: (34/255, 34/255, 34/255, 1)
             bold: True
@@ -34,14 +34,14 @@
                 size_hint_x: 0.5
 
                 Label:
-                    text: "Temperatura inicial fluido caliente (°C)"
+                    text: "Turbidez inicial (NTU)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
                     size_hint_y: None
                     height: 28
                 TextInput:
-                    id: input_tcaliente
-                    hint_text: "Ej: 70"
+                    id: input_turbidez
+                    hint_text: "Ej: 50"
                     input_filter: 'float'
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
@@ -50,29 +50,13 @@
                     height: 32
 
                 Label:
-                    text: "Caudal fluido caliente (L/min)"
+                    text: "Volumen de agua (L)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
                     size_hint_y: None
                     height: 28
                 TextInput:
-                    id: input_caudal_caliente
-                    hint_text: "Ej: 2.5"
-                    input_filter: 'float'
-                    background_color: (1,1,1,1)
-                    foreground_color: (34/255, 34/255, 34/255, 1)
-                    multiline: False
-                    size_hint_y: None
-                    height: 32
-
-                Label:
-                    text: "Temperatura inicial fluido frío (°C)"
-                    color: (34/255, 34/255, 34/255, 1)
-                    font_size: '16sp'
-                    size_hint_y: None
-                    height: 28
-                TextInput:
-                    id: input_tfrio
+                    id: input_volumen
                     hint_text: "Ej: 20"
                     input_filter: 'float'
                     background_color: (1,1,1,1)
@@ -82,36 +66,50 @@
                     height: 32
 
                 Label:
-                    text: "Caudal fluido frío (L/min)"
+                    text: "Capas activas"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
                     size_hint_y: None
-                    height: 28
-                TextInput:
-                    id: input_caudal_frio
-                    hint_text: "Ej: 2.5"
-                    input_filter: 'float'
-                    background_color: (1,1,1,1)
-                    foreground_color: (34/255, 34/255, 34/255, 1)
-                    multiline: False
+                    height: 24
+
+                BoxLayout:
+                    orientation: 'horizontal'
+                    spacing: 10
                     size_hint_y: None
                     height: 32
 
-                Label:
-                    text: "Tiempo de operación (min)"
-                    color: (34/255, 34/255, 34/255, 1)
-                    font_size: '16sp'
-                    size_hint_y: None
-                    height: 28
-                TextInput:
-                    id: input_tiempo
-                    hint_text: "Ej: 10"
-                    input_filter: 'float'
-                    background_color: (1,1,1,1)
-                    foreground_color: (34/255, 34/255, 34/255, 1)
-                    multiline: False
-                    size_hint_y: None
-                    height: 32
+                    CheckBox:
+                        id: check_grava
+                        active: root.grava_activa
+                        on_active: root.grava_activa = self.active
+                    Label:
+                        text: "Grava"
+                        color: (34/255, 34/255, 34/255, 1)
+                        font_size: '15sp'
+                        size_hint_x: None
+                        width: 60
+
+                    CheckBox:
+                        id: check_arena
+                        active: root.arena_activa
+                        on_active: root.arena_activa = self.active
+                    Label:
+                        text: "Arena"
+                        color: (34/255, 34/255, 34/255, 1)
+                        font_size: '15sp'
+                        size_hint_x: None
+                        width: 60
+
+                    CheckBox:
+                        id: check_carbon
+                        active: root.carbon_activo
+                        on_active: root.carbon_activo = self.active
+                    Label:
+                        text: "Carbón activado"
+                        color: (34/255, 34/255, 34/255, 1)
+                        font_size: '15sp'
+                        size_hint_x: None
+                        width: 110
 
             # Resultados a la derecha (idéntico a práctica 1)
             BoxLayout:
@@ -134,25 +132,13 @@
                     bold: True
 
                 Label:
-                    text: "Temperatura inicial: [b]{}[/b]".format(root.temperatura_inicial)
+                    text: "Turbidez final: [b]{}[/b]".format(root.turbidez_final)
                     markup: True
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
 
                 Label:
-                    text: "Temperatura final: [b]{}[/b]".format(root.temperatura_final)
-                    markup: True
-                    color: (34/255, 34/255, 34/255, 1)
-                    font_size: '16sp'
-
-                Label:
-                    text: "Tiempo de exposición: [b]{}[/b]".format(root.tiempo_exposicion)
-                    markup: True
-                    color: (34/255, 34/255, 34/255, 1)
-                    font_size: '16sp'
-
-                Label:
-                    text: "Eficiencia térmica: [b]{}[/b]".format(root.eficiencia_termica)
+                    text: "Eficiencia de remoción: [b]{}[/b]".format(root.eficiencia_remocion)
                     markup: True
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
@@ -175,7 +161,7 @@
                 size_hint_x: 1
                 font_size: '16sp'
                 background_color: 0.0, 0.2, 0.4, 1
-                on_release: root.simular_intercambio()
+                on_release: root.simular_filtrado()
 
             Button:
                 text: "Graficar"

@@ -1,8 +1,8 @@
 #:kivy 2.1.0
-# Layout práctica 5
+# Layout práctica 3
 
-<Practica5Screen>:
-    name: "practica5"
+<Practica3Screen>:
+    name: "practica3"
     canvas.before:
         Color:
             rgba: (240/255, 240/255, 240/255, 1)
@@ -16,7 +16,7 @@
         spacing: min(self.height*0.04, 30)
 
         Label:
-            text: "Práctica 5 – Simulación de captación de agua lluvia"
+            text: "Práctica 3 – Intercambiador de calor"
             font_size: str(max(self.width, self.height) * 0.025) + 'sp'
             color: (34/255, 34/255, 34/255, 1)
             bold: True
@@ -34,13 +34,45 @@
                 size_hint_x: 0.5
 
                 Label:
-                    text: "Intensidad de la lluvia (mm/h)"
+                    text: "Temperatura inicial fluido caliente (°C)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
                     size_hint_y: None
                     height: 28
                 TextInput:
-                    id: input_intensidad
+                    id: input_tcaliente
+                    hint_text: "Ej: 70"
+                    input_filter: 'float'
+                    background_color: (1,1,1,1)
+                    foreground_color: (34/255, 34/255, 34/255, 1)
+                    multiline: False
+                    size_hint_y: None
+                    height: 32
+
+                Label:
+                    text: "Caudal fluido caliente (L/min)"
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+                    size_hint_y: None
+                    height: 28
+                TextInput:
+                    id: input_caudal_caliente
+                    hint_text: "Ej: 2.5"
+                    input_filter: 'float'
+                    background_color: (1,1,1,1)
+                    foreground_color: (34/255, 34/255, 34/255, 1)
+                    multiline: False
+                    size_hint_y: None
+                    height: 32
+
+                Label:
+                    text: "Temperatura inicial fluido frío (°C)"
+                    color: (34/255, 34/255, 34/255, 1)
+                    font_size: '16sp'
+                    size_hint_y: None
+                    height: 28
+                TextInput:
+                    id: input_tfrio
                     hint_text: "Ej: 20"
                     input_filter: 'float'
                     background_color: (1,1,1,1)
@@ -50,14 +82,14 @@
                     height: 32
 
                 Label:
-                    text: "Área del techo (m²)"
+                    text: "Caudal fluido frío (L/min)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
                     size_hint_y: None
                     height: 28
                 TextInput:
-                    id: input_area
-                    hint_text: "Ej: 50"
+                    id: input_caudal_frio
+                    hint_text: "Ej: 2.5"
                     input_filter: 'float'
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
@@ -66,14 +98,14 @@
                     height: 32
 
                 Label:
-                    text: "Tiempo de captación (min)"
+                    text: "Tiempo de operación (min)"
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
                     size_hint_y: None
                     height: 28
                 TextInput:
                     id: input_tiempo
-                    hint_text: "Ej: 30"
+                    hint_text: "Ej: 10"
                     input_filter: 'float'
                     background_color: (1,1,1,1)
                     foreground_color: (34/255, 34/255, 34/255, 1)
@@ -102,56 +134,28 @@
                     bold: True
 
                 Label:
-                    text: "Volumen captado: [b]{}[/b]".format(root.volumen_captado)
+                    text: "Temperatura inicial: [b]{}[/b]".format(root.temperatura_inicial)
                     markup: True
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
 
                 Label:
-                    text: "Nivel en el tanque: [b]{}[/b]".format(root.nivel_sensor)
+                    text: "Temperatura final: [b]{}[/b]".format(root.temperatura_final)
                     markup: True
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
 
                 Label:
-                    text: "Volumen estimado por sensor: [b]{}[/b]".format(root.volumen_estimado)
+                    text: "Tiempo de exposición: [b]{}[/b]".format(root.tiempo_exposicion)
                     markup: True
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
 
                 Label:
-                    text: "Precisión del sensor: [b]{}[/b]".format(root.precision)
+                    text: "Eficiencia térmica: [b]{}[/b]".format(root.eficiencia_termica)
                     markup: True
                     color: (34/255, 34/255, 34/255, 1)
                     font_size: '16sp'
-
-                Label:
-                    text: "Tiempo de captación: [b]{}[/b]".format(root.tiempo_captacion)
-                    markup: True
-                    color: (34/255, 34/255, 34/255, 1)
-                    font_size: '16sp'
-
-                # Visualización gráfica del tanque (barra de nivel)
-                BoxLayout:
-                    orientation: 'horizontal'
-                    size_hint_y: None
-                    height: 32
-                    spacing: 8
-                    Label:
-                        text: "Tanque"
-                        color: (46/255, 134/255, 222/255, 1)
-                        font_size: '14sp'
-                        size_hint_x: 0.2
-                    ProgressBar:
-                        max: 100
-                        value: float(root.nivel_sensor.split()[0]) if root.nivel_sensor else 0
-                        size_hint_x: 0.7
-                        height: 22
-                    Label:
-                        text: "100 cm"
-                        color: (46/255, 134/255, 222/255, 1)
-                        font_size: '14sp'
-                        size_hint_x: 0.2
 
                 Label:
                     text: root.mensaje_error
@@ -171,7 +175,7 @@
                 size_hint_x: 1
                 font_size: '16sp'
                 background_color: 0.0, 0.2, 0.4, 1
-                on_release: root.simular_captacion()
+                on_release: root.simular_intercambio()
 
             Button:
                 text: "Graficar"
