@@ -11,6 +11,7 @@ from frontend.screens.practica4_screen import Practica4Screen
 from frontend.screens.practica5_screen import Practica5Screen
 
 # Cargar los archivos .kv
+Builder.load_file('animacion_practica1.kv')
 Builder.load_file('kv/main.kv')
 Builder.load_file('kv/practica1.kv')
 Builder.load_file('kv/practica2.kv')
