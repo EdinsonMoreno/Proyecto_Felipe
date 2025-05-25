@@ -132,7 +132,7 @@ def draw_flechas_shell(surface):
 # --- Etiquetas técnicas y flechas indicadoras ---
 def draw_labels(surface):
     # Título
-    lbl = font.render("Intercambiador de Calor - Shell & Tube", True, NEGRO)
+    lbl = font.render("Intercambiador de Calor", True, NEGRO)
     screen.blit(lbl, (W//2 - lbl.get_width()//2, 30))
     # Entrada de tubo
     lbl1 = font_small.render("Entrada de tubo", True, NEGRO)
@@ -163,7 +163,7 @@ def draw_labels(surface):
         pygame.draw.polygon(screen, NEGRO, [(x, shell_y+shell_h+60), (x-8, shell_y+shell_h+60+8), (x+8, shell_y+shell_h+60+8)])
     # Deflectores
     for i, bx in enumerate(baffles_x):
-        lblbaf = font_small.render("Deflector", True, NEGRO)
+        lblbaf = font_small.render(" ", False, NEGRO)
         if i%2==0:
             lx, ly = bx+16+20, shell_y+10
         else:
@@ -173,7 +173,7 @@ def draw_labels(surface):
         pygame.draw.line(screen, NEGRO, (lx, ly+lblbaf.get_height()//2), (bx+16, ly+lblbaf.get_height()//2), 2)
         pygame.draw.polygon(screen, NEGRO, [(bx+16, ly+lblbaf.get_height()//2), (bx+16-8, ly+lblbaf.get_height()//2-6), (bx+16-8, ly+lblbaf.get_height()//2+6)])
     # Chapa de tubos
-    lblchapa = font_small.render("Chapa de tubos", True, NEGRO)
+    lblchapa = font_small.render(" ", False, NEGRO)
     cx1, cy1 = shell_x-18-lblchapa.get_width()-10, shell_y+shell_h//2-lblchapa.get_height()//2
     cx2, cy2 = shell_x+shell_w+18+10, shell_y+shell_h//2-lblchapa.get_height()//2
     screen.blit(lblchapa, (cx1, cy1))
