@@ -146,8 +146,8 @@ def draw_goticas_agua(surface, t):
 # --- Etiquetas y callouts ---
 def draw_labels(surface):
     # Título
-    lbl = font.render("Filtrado Multicapa Industrial", True, NEGRO)
-    screen.blit(lbl, (W//2 - lbl.get_width()//2, 30))
+    lbl = font.render("3. Filtrado Multicapa", True, NEGRO)
+    screen.blit(lbl, (W//2 - lbl.get_width()//0.7, 30))
     # Etiquetas de capas alineadas a la izquierda
     etiquetas = ["Grava", "Arena", "Carbón activado"]
     y_caps = [cy+60, cy+h//2, cy+h-40]
@@ -183,7 +183,7 @@ while True:
     draw_goticas_agua(screen, onda_anim)
     draw_labels(screen)
     onda_anim += 1
-    # Botón Volver centrado abajo
+    # Botón Volver centrado abajo (estandarizado)
     volver_rect = pygame.Rect(W//2-60, H-70, 120, 40)
     pygame.draw.rect(screen, AZUL_OSCURO, volver_rect, border_radius=8)
     pygame.draw.rect(screen, NEGRO, volver_rect, 2, border_radius=8)

@@ -196,7 +196,7 @@ while True:
     draw_flechas_shell(screen)
     draw_labels(screen)
     f_anim += 2
-    # Botón Volver centrado abajo
+    # Botón Volver centrado abajo (estandarizado)
     volver_rect = pygame.Rect(W//2-60, H-70, 120, 40)
     pygame.draw.rect(screen, AZUL_OSCURO, volver_rect, border_radius=8)
     pygame.draw.rect(screen, NEGRO, volver_rect, 2, border_radius=8)

@@ -6,6 +6,8 @@ from kivy.uix.label import Label
 import matplotlib.pyplot as plt
 from kivy_garden.matplotlib import FigureCanvasKivyAgg
 import subprocess
+import os
+import sys
 
 class Practica4Screen(Screen):
     temperatura_maxima = StringProperty("")
@@ -136,4 +138,19 @@ class Practica4Screen(Screen):
         self.barra_temp = 0
         self.mensaje_error = ""
     def mostrar_animacion(self):
-        subprocess.Popen(["python", "animacion_practica4_pygame.py"])
+        # Detectar si estamos en un ejecutable PyInstaller
+        if getattr(sys, 'frozen', False):
+            exe_path = os.path.join(os.path.dirname(sys.executable), 'animacion_practica4_pygame.exe')
+            if os.path.exists(exe_path):
+                os.startfile(exe_path)
+            else:
+                from kivy.uix.popup import Popup
+                from kivy.uix.label import Label
+                Popup(title='Error', content=Label(text='No se encontró animacion_practica4_pygame.exe'), size_hint=(None, None), size=(400, 200)).open()
+        else:
+            # Ejecutar la animación sin mostrar la consola en Windows
+            if sys.platform == 'win32':
+                CREATE_NO_WINDOW = 0x08000000
+                subprocess.Popen([sys.executable, 'animacion_practica4_pygame.py'], creationflags=CREATE_NO_WINDOW)
+            else:
+                subprocess.Popen([sys.executable, 'animacion_practica4_pygame.py'])

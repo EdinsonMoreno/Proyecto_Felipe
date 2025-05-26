@@ -9,6 +9,7 @@ font_small = pygame.font.SysFont('arial', int(H*0.025))
 # Paleta profesional
 AZUL = (30, 90, 180)
 AZUL_CLARO = (120, 180, 255)
+AZUL_OSCURO = (10, 60, 120)
 ROJO = (220, 60, 60)
 NARANJA = (240, 180, 80)
 GRIS = (180, 180, 180)
@@ -97,10 +98,9 @@ while True:
     draw_bubbles(screen, f_anim)
     draw_labels(screen)
     f_anim += 1
-    # Botón Volver
-    volver_rect = pygame.Rect(W-150, H-70, 120, 40)
-    sombra(screen, (W-150, H-70, 120, 40), 8, (4,4), 60)
-    pygame.draw.rect(screen, ROJO, volver_rect, border_radius=8)
+    # Botón Volver centrado abajo (estandarizado)
+    volver_rect = pygame.Rect(W//2-60, H-70, 120, 40)
+    pygame.draw.rect(screen, AZUL_OSCURO, volver_rect, border_radius=8)
     pygame.draw.rect(screen, NEGRO, volver_rect, 2, border_radius=8)
     text = font_small.render("Volver", True, BLANCO)
     text_rect = text.get_rect(center=volver_rect.center)

@@ -56,7 +56,7 @@ def draw_panel(surface):
     surface.blit(panel, (px, py))
     # Etiqueta (fuera del panel, arriba, margen 12px)
     label_panel = font_small.render("Panel Solar", True, NEGRO)
-    surface.blit(label_panel, (px+pw//2-label_panel.get_width()//2, py-12-label_panel.get_height()))
+    surface.blit(label_panel, (px+pw//2-label_panel.get_width()//2, py--150-label_panel.get_height()))
     # Soporte
     pygame.draw.line(surface, GRIS_OSCURO, (px+pw//2, py+ph), (px+pw//2, py+ph+40), 6)
     pygame.draw.circle(surface, GRIS_OSCURO, (px+pw//2, py+ph+40), 8)
@@ -79,7 +79,7 @@ def draw_sun(surface, anim):
         pygame.draw.line(surface, (220,200,100), (sx,180), (420+20*i, 340), 4)
     # Etiqueta (arriba del sol, margen 12px)
     label_sol = font_small.render("Sol", True, NEGRO)
-    surface.blit(label_sol, (sx-label_sol.get_width()//2, sy-60-label_sol.get_height()-12))
+    surface.blit(label_sol, (sx-label_sol.get_width()//2, sy--150-label_sol.get_height()-12))
 
 def draw_battery(surface, nivel):
     bx, by, bw, bh = 700, 320, 60, 180
@@ -137,9 +137,8 @@ while True:
     if bateria_nivel < 150:
         bateria_nivel += 1.2
     rayos_anim += 1
-    # Botón Volver
-    volver_rect = pygame.Rect(W-150, H-70, 120, 40)
-    sombra(screen, (W-150, H-70, 120, 40), 8, (4,4), 60)
+    # Botón Volver centrado abajo (estandarizado)
+    volver_rect = pygame.Rect(W//2-60, H-70, 120, 40)
     pygame.draw.rect(screen, AZUL_OSCURO, volver_rect, border_radius=8)
     pygame.draw.rect(screen, NEGRO, volver_rect, 2, border_radius=8)
     text = font_small.render("Volver", True, BLANCO)

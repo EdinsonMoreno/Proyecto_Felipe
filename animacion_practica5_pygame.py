@@ -9,6 +9,7 @@ font_small = pygame.font.SysFont('arial', int(H*0.025))
 # Paleta profesional
 AZUL = (30, 90, 180)
 AZUL_CLARO = (120, 180, 255)
+AZUL_OSCURO = (0, 60, 120)
 GRIS = (180, 180, 180)
 GRIS_OSCURO = (80, 80, 80)
 NEGRO = (0,0,0)
@@ -83,10 +84,10 @@ def draw_tanque(surface, nivel):
     # Nivel de agua con reflejo
     pygame.draw.rect(surface, AZUL, (530, 480-nivel, 100, nivel), border_radius=18)
     pygame.draw.rect(surface, NEGRO, (530, 480-nivel, 100, nivel), 2, border_radius=18)
-    pygame.draw.arc(surface, (255,255,255,60), (540, 480-nivel+10, 80, 30), math.radians(200), math.radians(320), 4)
+    pygame.draw.arc(surface, (255,255,255,60), (540, 480-nivel+10, 50, 30), math.radians(200), math.radians(320), 4)
     # Etiqueta (abajo del tanque, margen 12px)
     lbl = font_small.render("Tanque de captación", True, NEGRO)
-    surface.blit(lbl, (520+60-lbl.get_width()//2, 480+40+12))
+    surface.blit(lbl, (520+60-lbl.get_width()//2, 480+40+2))
     # Flecha de llenado
     pygame.draw.polygon(surface, AZUL_CLARO, [(580, 480-nivel), (600, 480-nivel-20), (560, 480-nivel-20)])
     pygame.draw.polygon(surface, NEGRO, [(580, 480-nivel), (600, 480-nivel-20), (560, 480-nivel-20)], 2)
@@ -96,13 +97,13 @@ def draw_labels(surface):
     screen.blit(lbl, (W//2 - lbl.get_width()//2, 30))
     # Etiqueta Nube (arriba, margen 12px)
     lbl2 = font_small.render("Nube", True, NEGRO)
-    screen.blit(lbl2, (370+90-lbl2.get_width()//2, 80-12-lbl2.get_height()))
+    screen.blit(lbl2, (370+90-lbl2.get_width()//2, 80-8-lbl2.get_height()))
     # Etiqueta Techo (abajo del techo, margen 12px)
     lbl3 = font_small.render("Techo", True, NEGRO)
-    screen.blit(lbl3, (380+70-lbl3.get_width()//2, 220+16+12))
+    screen.blit(lbl3, (380+20-lbl3.get_width()//2, 220+16+12))
     # Etiqueta Tubería (a la derecha de la tubería, margen 12px)
     lbl4 = font_small.render("Tubería", True, NEGRO)
-    surface.blit(lbl4, (540+20+12, 350+60))
+    surface.blit(lbl4, (540+20+-100, 350+22))
 
 def draw_background(surface):
     surface.fill(BLANCO)
@@ -119,10 +120,9 @@ while True:
     if nivel < 120:
         nivel += 0.5 + 0.2*math.sin(f_anim/10)
     f_anim += 1
-    # Botón Volver
-    volver_rect = pygame.Rect(W-150, H-70, 120, 40)
-    sombra(screen, (W-150, H-70, 120, 40), 8, (4,4), 60)
-    pygame.draw.rect(screen, AZUL, volver_rect, border_radius=8)
+    # Botón Volver centrado abajo (estandarizado)
+    volver_rect = pygame.Rect(W//2-60, H-70, 120, 40)
+    pygame.draw.rect(screen, AZUL_OSCURO, volver_rect, border_radius=8)
     pygame.draw.rect(screen, NEGRO, volver_rect, 2, border_radius=8)
     text = font_small.render("Volver", True, BLANCO)
     text_rect = text.get_rect(center=volver_rect.center)

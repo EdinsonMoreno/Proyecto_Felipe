@@ -1,6 +1,7 @@
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
+import os
 
 # Importar las pantallas del frontend
 from frontend.main_screen import MainScreen
@@ -11,13 +12,13 @@ from frontend.screens.practica4_screen import Practica4Screen
 from frontend.screens.practica5_screen import Practica5Screen
 
 # Cargar los archivos .kv
-Builder.load_file('animacion_practica1.kv')
-Builder.load_file('kv/main.kv')
-Builder.load_file('kv/practica1.kv')
-Builder.load_file('kv/practica2.kv')
-Builder.load_file('kv/practica3.kv')
-Builder.load_file('kv/practica4.kv')
-Builder.load_file('kv/practica5.kv')
+Builder.load_file(os.path.join(os.path.dirname(__file__), 'animacion_practica1.kv'))
+Builder.load_file(os.path.join(os.path.dirname(__file__), 'kv', 'main.kv'))
+Builder.load_file(os.path.join(os.path.dirname(__file__), 'kv', 'practica1.kv'))
+Builder.load_file(os.path.join(os.path.dirname(__file__), 'kv', 'practica2.kv'))
+Builder.load_file(os.path.join(os.path.dirname(__file__), 'kv', 'practica3.kv'))
+Builder.load_file(os.path.join(os.path.dirname(__file__), 'kv', 'practica4.kv'))
+Builder.load_file(os.path.join(os.path.dirname(__file__), 'kv', 'practica5.kv'))
 
 class RootWidget(ScreenManager):
     pass
