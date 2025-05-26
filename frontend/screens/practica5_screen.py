@@ -28,31 +28,37 @@ class Practica5Screen(Screen):
             try:
                 intensidad_lluvia = float(self.ids.input_intensidad.text)
                 area_techo = float(self.ids.input_area.text)
-                duracion = float(self.ids.input_tiempo.text)  # Corregido aquí
+                duracion = float(self.ids.input_tiempo.text)
             except (ValueError, AttributeError):
                 self.mostrar_error("Todos los valores deben ser numéricos y válidos.")
                 return
             if intensidad_lluvia <= 0 or area_techo <= 0 or duracion <= 0:
                 self.mostrar_error("Todos los valores deben ser mayores a cero.")
-                return            # El backend ahora retorna directamente los datos, sin status/data
+                return
             datos = captacion.calcular_resultados(
                 intensidad_lluvia=intensidad_lluvia,
                 area_techo=area_techo,
                 duracion=duracion
             )
-            # Actualizar las claves según el nuevo formato del backend
-            # Convertir volúmenes de m³ a litros (multiplicar por 1000)
-            self.volumen_captado = f"{datos.get('volumen_captado', 0) * 1000:.2f} L"
-            self.nivel_sensor = f"{datos.get('nivel_tanque', 0):.1f} cm"  # Cambio: nivel_tanque
-            self.volumen_estimado = f"{datos.get('volumen_estimado_sensor', 0) * 1000:.2f} L"  # Cambio: volumen_estimado_sensor
-            self.precision = f"{datos.get('precision_sensor', 0):.1f} %"  # Cambio: precision_sensor
-            self.tiempo_captacion = f"{datos.get('tiempo_captacion', 0):.1f} min"
-            self.mensaje_error = ""
-            # Guardar valor para graficar (nivel del tanque)
-            valor_actual = datos.get('nivel_tanque', 0)  # Cambio: nivel_tanque
-            self.grafico_valores.append(valor_actual)
-            if len(self.grafico_valores) > 4:
-                self.grafico_valores.pop(0)
+            if datos.get("status") == "ok":
+                d = datos.get("data", {})
+                self.volumen_captado = f"{d.get('volumen_captado', 0):.2f} L"
+                self.nivel_sensor = f"{d.get('nivel_tanque', 0):.1f} cm"
+                self.volumen_estimado = f"{d.get('volumen_estimado_sensor', 0):.2f} L"
+                self.precision = f"{d.get('precision_sensor', 0):.1f} %"
+                self.tiempo_captacion = f"{d.get('tiempo_captacion', 0):.1f} min"
+                self.mensaje_error = ""
+                valor_actual = d.get('nivel_tanque', 0)
+                self.grafico_valores.append(valor_actual)
+                if len(self.grafico_valores) > 4:
+                    self.grafico_valores.pop(0)
+            else:
+                self.volumen_captado = ""
+                self.nivel_sensor = ""
+                self.volumen_estimado = ""
+                self.precision = ""
+                self.tiempo_captacion = ""
+                self.mostrar_error(datos.get("message", "Error en la simulación"))
         except Exception:
             self.volumen_captado = ""
             self.nivel_sensor = ""

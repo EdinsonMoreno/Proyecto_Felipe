@@ -5,29 +5,34 @@ Módulo determinista y reactivo. Corrección de validaciones y tolerancia a entr
 
 from typing import Dict
 
-def calcular_resultados(radiacion, tension, corriente, tiempo, consumo=None, perdidas=None) -> Dict[str, object]:
+def calcular_resultados(radiacion, area, eficiencia_panel, horas_sol_pico=5, consumo=None, perdidas=None) -> Dict[str, object]:
     """
-    Calcula la energía generada, consumida y la eficiencia real del sistema.
-    Eficiencia = energía útil entregada a la carga / energía generada por el panel, considerando pérdidas y consumo real.
+    Calcula la energía generada, consumida y la eficiencia real del sistema fotovoltaico.
+    Parámetros:
+        radiacion: Radiación solar (W/m²)
+        area: Área del panel (m²)
+        eficiencia_panel: Eficiencia del panel (%)
+        horas_sol_pico: Horas Sol Pico (h, default=5)
+        consumo: Consumo de carga (Wh)
+        perdidas: Pérdidas del sistema (%)
     """
     try:
-        # Forzar conversión y valores por defecto si hay error
         try:
             radiacion = float(radiacion) if radiacion is not None else 850.0
         except Exception:
             radiacion = 850.0
         try:
-            tension = float(tension) if tension is not None else 14.0
+            area = float(area) if area is not None else 1.5
         except Exception:
-            tension = 14.0
+            area = 1.5
         try:
-            corriente = float(corriente) if corriente is not None else 8.0
+            eficiencia_panel = float(eficiencia_panel) if eficiencia_panel is not None else 18.0
         except Exception:
-            corriente = 8.0
+            eficiencia_panel = 18.0
         try:
-            tiempo = float(tiempo) if tiempo is not None else 1.0
+            horas_sol_pico = float(horas_sol_pico) if horas_sol_pico is not None else 5.0
         except Exception:
-            tiempo = 1.0
+            horas_sol_pico = 5.0
         try:
             consumo = float(consumo) if consumo is not None else None
         except Exception:
@@ -36,17 +41,26 @@ def calcular_resultados(radiacion, tension, corriente, tiempo, consumo=None, per
             perdidas = float(perdidas) if perdidas is not None else 0.0
         except Exception:
             perdidas = 0.0
-        energia_generada = tension * corriente * tiempo
-        # Si hay consumo y pérdidas, calcular energía útil real
+        # Potencia generada (W)
+        potencia = radiacion * area * (eficiencia_panel / 100)
+        # Energía generada (Wh)
+        energia_generada = potencia * horas_sol_pico
+        # Energía útil después de pérdidas
+        energia_util = energia_generada * (1 - perdidas / 100)
+        # Energía consumida
         if consumo is not None:
-            energia_util = min(consumo, energia_generada * (1 - perdidas))
+            energia_consumida = min(energia_util, consumo)
         else:
-            energia_util = energia_generada * (1 - perdidas)
-        eficiencia = (energia_util / energia_generada) * 100 if energia_generada > 0 else 0.0
+            energia_consumida = energia_util
+        # Eficiencia total del sistema (%)
+        eficiencia = (energia_consumida / energia_generada) * 100 if energia_generada > 0 else 0.0
         resultado = {
             "radiacion": round(radiacion, 1),
+            "area": round(area, 2),
+            "eficiencia_panel": round(eficiencia_panel, 2),
+            "horas_sol_pico": round(horas_sol_pico, 2),
             "energia_generada": round(energia_generada, 2),
-            "energia_consumida": round(energia_util, 2),
+            "energia_consumida": round(energia_consumida, 2),
             "eficiencia": round(eficiencia, 1)
         }
         for k, v in resultado.items():
@@ -54,4 +68,4 @@ def calcular_resultados(radiacion, tension, corriente, tiempo, consumo=None, per
                 resultado[k] = 0.0
         return {"status": "ok", "data": resultado, "message": "Cálculo exitoso."}
     except Exception as e:
-        return {"status": "ok", "data": {"radiacion": 850.0, "energia_generada": 112.0, "energia_consumida": 84.0, "eficiencia": 75.0}, "message": f"modo emergencia activado: {str(e)}"}
+        return {"status": "ok", "data": {"radiacion": 850.0, "area": 1.5, "eficiencia_panel": 18.0, "horas_sol_pico": 5.0, "energia_generada": 112.0, "energia_consumida": 84.0, "eficiencia": 75.0}, "message": f"modo emergencia activado: {str(e)}"}

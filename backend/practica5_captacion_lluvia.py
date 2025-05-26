@@ -8,8 +8,7 @@ import random
 
 def calcular_resultados(intensidad_lluvia, area_techo, duracion) -> Dict[str, object]:
     """
-    Calcula el volumen captado (L), nivel del tanque (cm), volumen estimado por el sensor (L) y precisión de medición (%).
-    Tolerante a entradas nulas o erróneas. Siempre retorna datos válidos.
+    Calcula el volumen captado (L), nivel del tanque (cm, máx 100), volumen estimado por el sensor (L, con error ±5%), precisión real del sensor (%) y advierte si el tiempo es poco realista.
     """
     try:
         try:
@@ -24,25 +23,32 @@ def calcular_resultados(intensidad_lluvia, area_techo, duracion) -> Dict[str, ob
             duracion = float(duracion) if duracion is not None else 8.5
         except Exception:
             duracion = 8.5
-        # Volumen captado en m3
-        volumen_captado_m3 = (intensidad_lluvia / 60) * area_techo * duracion  # m3
-        volumen_captado = volumen_captado_m3 * 1000  # L
-        # Área base del tanque (1 m2)
-        area_base_tanque = 1.0  # m2
-        # Nivel del tanque en metros
-        nivel_tanque = volumen_captado_m3 / area_base_tanque  # m
-        nivel_tanque_cm = nivel_tanque * 100  # cm
+        # Volumen captado en litros (fórmula física correcta)
+        volumen_litros = (intensidad_lluvia * area_techo * duracion) / 60  # L
+        # Área base del tanque (m2)
+        area_tanque = 1.0  # m2 (puede ajustarse en config.py si se requiere)
+        volumen_m3 = volumen_litros / 1000
+        altura_m = volumen_m3 / area_tanque
+        nivel_cm = altura_m * 100
+        nivel_cm = min(nivel_cm, 100)  # Limitar a 100 cm
         # Simulación de error del sensor (±5%)
-        error_pct = random.uniform(-0.05, 0.05)
-        volumen_estimado_sensor = volumen_captado * (1 + error_pct)  # L        # Precisión del sensor
-        precision = 100 - abs(volumen_estimado_sensor - volumen_captado) / volumen_captado * 100 if volumen_captado > 0 else 0.0
+        error = random.uniform(-0.05, 0.05)
+        volumen_estimado = volumen_litros * (1 + error)
+        # Precisión real del sensor
+        precision = 100 - abs(volumen_estimado - volumen_litros) / volumen_litros * 100 if volumen_litros > 0 else 0.0
+        # Advertencia por tiempo poco realista
+        advertencia = ""
+        if duracion > 720:
+            advertencia = "Duración de lluvia poco realista"
         datos = {
-            "volumen_captado": round(volumen_captado, 2),  # L
-            "nivel_tanque": round(nivel_tanque_cm, 2),     # cm
-            "volumen_estimado_sensor": round(volumen_estimado_sensor, 2),  # L
+            "volumen_captado": round(volumen_litros, 2),
+            "nivel_tanque": round(nivel_cm, 2),
+            "volumen_estimado_sensor": round(volumen_estimado, 2),
             "precision_sensor": round(precision, 2),
             "tiempo_captacion": round(duracion, 2)
         }
+        if advertencia:
+            datos["advertencia"] = advertencia
         for k, v in datos.items():
             if isinstance(v, (int, float)) and v < 0:
                 datos[k] = 0.0

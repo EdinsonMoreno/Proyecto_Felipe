@@ -28,31 +28,21 @@ class Practica1Screen(Screen):
             try:
                 radiacion = float(self.ids.input_radiacion.text)
                 area = float(self.ids.input_area.text)
-                eficiencia = float(self.ids.input_eficiencia.text) / 100.0  # % a fracción
+                eficiencia_panel = float(self.ids.input_eficiencia.text)  # %
                 consumo = float(self.ids.input_consumo.text)
-                perdidas = float(self.ids.input_perdidas.text) / 100.0  # % a fracción
+                perdidas = float(self.ids.input_perdidas.text)  # %
             except ValueError:
                 self.mostrar_error("Todos los valores deben ser numéricos y válidos.")
                 return
-            if radiacion <= 0 or area <= 0 or eficiencia <= 0 or consumo < 0 or perdidas < 0:
+            if radiacion <= 0 or area <= 0 or eficiencia_panel <= 0 or consumo < 0 or perdidas < 0:
                 self.mostrar_error("Todos los valores deben ser mayores a cero (excepto consumo y pérdidas, que pueden ser cero).")
                 return
-            # Cálculo de parámetros para el backend
-            # Suponemos 1 día de operación
-            tiempo = 24  # horas
-            # Potencia generada por el panel (W) = radiación * área * eficiencia
-            potencia_panel = radiacion * area * eficiencia
-            # Energía generada (Wh) = potencia * tiempo
-            energia_generada = potencia_panel * tiempo
-            # Tensión y corriente ficticias para el backend (ajustar si se requiere realismo)
-            tension = 12.0
-            corriente = energia_generada / (tension * tiempo) if tension * tiempo > 0 else 1.0
-            # Llamar backend con los parámetros calculados
+            # Llamar backend con los parámetros físicos correctos
             resultado = be.calcular_resultados(
                 radiacion=radiacion,
-                tension=tension,
-                corriente=corriente,
-                tiempo=tiempo,
+                area=area,
+                eficiencia_panel=eficiencia_panel,
+                horas_sol_pico=5,  # valor típico, o permitir input si se desea
                 consumo=consumo,
                 perdidas=perdidas
             )
