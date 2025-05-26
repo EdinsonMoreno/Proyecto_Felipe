@@ -8,7 +8,7 @@ from typing import Dict
 def calcular_resultados(turbidez_inicial, volumen, tiempo, grava_activa=True, arena_activa=True, carbon_activo=True) -> Dict[str, object]:
     """
     Calcula la turbidez final y la eficiencia de remoción de sólidos en el filtrado multicapa.
-    La eficiencia depende de volumen, turbidez inicial, tiempo y capas activas.
+    Aplica reducción secuencial por capas activas: grava (30%), arena (40%), carbón activado (50%).
     """
     try:
         try:
@@ -23,27 +23,26 @@ def calcular_resultados(turbidez_inicial, volumen, tiempo, grava_activa=True, ar
             tiempo = int(tiempo) if tiempo is not None else 95
         except Exception:
             tiempo = 95
-        # Capas activas
-        grava_activa = bool(grava_activa)
-        arena_activa = bool(arena_activa)
-        carbon_activo = bool(carbon_activo)
-        # Eficiencia base
-        eficiencia_base = 93.0
-        penalizacion_vol = max(0, (volumen - 10) * 1.5)
-        penalizacion_turbidez = max(0, (turbidez_inicial - 50) * 0.25)
-        bonificacion_tiempo = min(10, (tiempo - 60) * 0.2) if tiempo > 60 else 0
-        # Penalización/bonificación por capas activas
-        capas_activas = sum([grava_activa, arena_activa, carbon_activo])
-        bonificacion_capas = (capas_activas - 3) * 7  # -7% por cada capa inactiva, +0 si todas activas
-        eficiencia = eficiencia_base - penalizacion_vol - penalizacion_turbidez + bonificacion_tiempo + bonificacion_capas
-        eficiencia = max(0, min(eficiencia, 99.9))
-        turbidez_final = max(turbidez_inicial * (1 - eficiencia/100), 1.0)
+        # Eficiencias típicas por capa
+        E_GRAVA = 0.3
+        E_ARENA = 0.4
+        E_CARBON = 0.5
+        turbidez = turbidez_inicial
+        # Secuencia: grava → arena → carbón activado
+        if grava_activa:
+            turbidez = turbidez * (1 - E_GRAVA)
+        if arena_activa:
+            turbidez = turbidez * (1 - E_ARENA)
+        if carbon_activo:
+            turbidez = turbidez * (1 - E_CARBON)
+        turbidez_final = max(turbidez, 0.5)  # No forzar mínimo arbitrario, pero evitar negativos
+        eficiencia_remocion = (turbidez_inicial - turbidez_final) / turbidez_inicial * 100 if turbidez_inicial > 0 else 0.0
         datos = {
             "tiempo_filtrado": tiempo,
             "turbidez_inicial": round(turbidez_inicial, 1),
             "turbidez_final": round(turbidez_final, 1),
             "volumen_filtrado": round(volumen, 1),
-            "eficiencia_remocion": round(eficiencia, 1)
+            "eficiencia_remocion": round(eficiencia_remocion, 1)
         }
         for k, v in datos.items():
             if isinstance(v, (int, float)) and v < 0:

@@ -45,28 +45,29 @@ class Practica4Screen(Screen):
             if volumen <= 0 or potencia <= 0 or tiempo <= 0:
                 self.mostrar_error("Todos los valores deben ser mayores a cero.")
                 return
-            # Llamar backend correctamente
+            # Llamar backend con parámetros correctos
             resultado = caldera.calcular_resultados(
-                temperatura_inicial=temperatura_inicial,
-                volumen_agua=volumen/1000,  # ml a L
-                energia_entrada=potencia,
-                modo=modo
+                potencia_w=potencia,
+                tiempo_min=tiempo,
+                volumen_agua_ml=volumen,
+                temperatura_inicial_c=temperatura_inicial
             )
             if resultado.get("status") == "ok":
                 datos = resultado.get("data", {})
-                self.temperatura_maxima = f"{datos.get('temperatura_maxima', 0):.1f} °C"
-                self.tiempo_ebullicion = f"{datos.get('tiempo_hasta_ebullicion', 0):.1f} min"
-                self.energia_consumida = f"{datos.get('energia_consumida', 0):.1f} Wh"
+                self.temperatura_maxima = f"{datos.get('temperatura_final', 0):.1f} °C"
+                t_ebullicion = datos.get('tiempo_hasta_ebullicion', None)
+                self.tiempo_ebullicion = f"{t_ebullicion:.1f} min" if t_ebullicion is not None else "No alcanzada"
+                self.energia_consumida = f"{datos.get('energia_consumida', 0):.2f} Wh"
                 self.vapor_generado = f"{datos.get('vapor_generado', 0):.1f} ml"
                 # Eficiencia real: energía útil (evaporación) / energía suministrada total
                 energia_util = float(datos.get('vapor_generado', 0)) / 1000 * 2260000  # ml a kg, L_v=2260000 J/kg
                 energia_suministrada = float(potencia) * float(tiempo) * 60  # W * min a J
                 self.eficiencia = f"{(energia_util/energia_suministrada*100):.1f} %" if energia_suministrada > 0 else "0 %"
                 # Barra de temperatura
-                temp = float(datos.get('temperatura_maxima', 0))
+                temp = float(datos.get('temperatura_final', 0))
                 self.barra_temp = min(max((temp-20)/80, 0), 1)  # Normalizar 20-100°C
                 # Guardar valor para graficar (temperatura máxima)
-                valor_actual = datos.get('temperatura_maxima', 0)
+                valor_actual = datos.get('temperatura_final', 0)
                 self.grafico_valores.append(valor_actual)
                 if len(self.grafico_valores) > 4:
                     self.grafico_valores.pop(0)
